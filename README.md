@@ -1,46 +1,59 @@
- # TODO
-> Handle lines like: [02:02.57]And I s{02:03.45,D/F#}ee,
+# BandGuy Frontend (React)
+Real-time collaborative band rehearsal tool — frontend SPA for SyncRock's BandGuy project
 
- Create an event DataChannel (JSON, in-order, JSON proto)
-   > Send route navigation to (newly) connected clients navigate("/home");
-      * Host controls routing, client must be on same routing as host (nav bar hidden)
-      * Send current song details (and/or API to query song details)
-      * Send current state (play mode, time, etc) - for late connecting clients
+BandGuy helps bands rehearse together online with synchronized playback of lyrics and tracks. 
+This repository contains the React frontend SPA for local development and testing.
 
-    > Think about PWA mode (manifest, service worker, support offline something...)
+## Features (Proof-of-Concept)
+- React SPA for local rehearsal sessions
+- Browser-based lyric file caching
+- Two track playback types
+- WebRTC-based network sync
+- Sample login/signout for testing
 
-https://www.megalobiz.com/search/all
-https://github.com/0x7d4/syncedlyrics
-syncedlyrics <search>
-https://github.com/magic-akari/lrc-maker
-https://lrc-maker.github.io/#
+## Repo Structure
+- `/src` – Main React app components and logic
+- `/public` – Static assets
+- `/express_server` – Local API stub for WebRTC signaling & sample login (only for local dev testing)
+- `/tests` – Component/unit tests
+- `.storybook` – Storybook UI component explorer
+- `vite.config.ts` – Vite build configuration
 
-http://schindlershadow.com/tools/LRCmaker/# (shows higher precision time. Editing is awkward. geared for extended)
+## Running Locally
 
-# AI audio splitter
-https://github.com/Anjok07/ultimatevocalremovergui
-Spleeter / SpleeterGUI
-https://www.reddit.com/r/audioengineering/comments/12iws99/ultimate_vocal_remover_is_holy_sht_level_good/
-https://colab.research.google.com/github/NVIDIA/NeMo/blob/r1.0.0b3/tutorials/asr/Offline_ASR.ipynb#scrollTo=a-LSg9dSL_O1
-NEMO
+1. Clone the repo:
+   git clone https://github.com/SyncRock/bandguy-frontend-react.git
+2. Install dependencies:
+   npm install
+3. Start local dev server + WebRTC stub:
+   npm run dev
+4. Open the app in your browser at http://localhost:5173
 
-Issues:
-  Switched from Guest to Host leaves host connection?
-  Issues of initial join state out of sync
-  Guest allowed to loclaly play/stop songs (should be readonly - or, just 'vote')
-  Initial song load sometimes fails? from web? or from cache?
+## Running Locally
 
-[ ] font size
-[ ] read only guest
-[ ] update set list - total time/song count
-[ ] lead in
-[ ] offset (seek)
-[ ] version track
-[ ] pause
-[ ] seek
+1. Clone the repo:
+   git clone https://github.com/SyncRock/bandguy-frontend-react.git
+2. Install dependencies:
+   npm install
+3. Start local dev server + WebRTC stub:
+   npm run dev
+4. Open the app in your browser at http://localhost:9000
 
-[ ] Cue Up Next track
-[ ] Fix issues
-[ ] Cue track (Starting Verse, )
-[ ] Support Multiple Audio Tracks - and panning channels (Click, Drums, Backing Vocals, etc)
-[ ] SHow chord diagrams 
+## Tests
+- Run unit/component tests:
+  npm run test
+- Run Storybook:
+  npm run storybook
+
+## Contributing
+- Pull requests welcome - must agree to code committer requirements
+- Use `npm run dev` for local development
+- Keep experiments in separate branches
+- Storybook components should be documented with examples
+
+## License
+GPL-3.0 License — see LICENSE file for details.
+
+## Architecture Diagram
+
+![BandGuy Frontend Architecture](assets/flow.png)
