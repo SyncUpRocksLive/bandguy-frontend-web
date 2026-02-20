@@ -3,7 +3,7 @@ import { SongTrack, TrackFormat } from "@/Types/Sets/SongDetail";
 import { useEffect, useRef, useState } from "react";
 import { getSongStore } from "@/Support/Stores/SongStore";
 import { LogError } from "@/Support/Utilities/Logger";
-import { lyricsParser } from "@/Support/Utilities/LricsFileParser";
+import { lyricsParser } from "@/Support/Utilities/LyricsFileParser";
 import { Lyric } from "@/Types/Lyrics";
 import BasicLyricViewer from "@/Components/Viewer/BasicLyricViewer";
 import { pickStore } from "@/Support/Stores/PrimaryStore";

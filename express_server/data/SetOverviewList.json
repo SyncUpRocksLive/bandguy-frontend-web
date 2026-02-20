@@ -1,0 +1,17 @@
+{ 
+    "sets":[
+        { 
+            "id": "sgs",
+            "name": "Sample",
+            "songs": [
+                {"id": "campdown", "title": "Camptown Races (1850)", "artist": "Stephen Foster" }
+            ]
+        },
+        {
+            "id": "aaa",
+            "name": "All",
+            "songs": [        
+           ]
+        }
+    ]
+}

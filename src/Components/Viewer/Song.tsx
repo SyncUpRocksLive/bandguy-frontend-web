@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import reactLogo from '@/assets/react.svg'
 import viteLogo from '/vite.svg'
 import '@/App.css'
-import { lyricsParser } from '@/Support/Utilities/LricsFileParser';
+import { lyricsParser } from '@/Support/Utilities/LyricsFileParser';
 import Viewer from '@/Components/Lyrics/Viewer/Viewer';
 import { Lyric } from '@/Types/Lyrics';
 import { msToHMS } from '@/Support/Utilities/DisplayHelpers';
