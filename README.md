@@ -55,6 +55,9 @@ This repository contains the React frontend SPA for local development and testin
 [![Discord](https://img.shields.io/badge/Discord-Join%20the%20Jam%20%F0%9F%8E%B6-%235865F2.svg)](https://discord.gg/YTxrm3M93A)
 
 
+[![YouTube](https://img.shields.io/badge/YouTube-Follow%20SyncRock-%23FF0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@SyncRock)
+
+
 ## License
 GPL-3.0 License — see LICENSE file for details.
 
