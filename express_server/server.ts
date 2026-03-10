@@ -20,6 +20,37 @@ useMessages(app);
 useSets(app);
 useLogin(app);
 
-app.listen(9001, () => console.log('Example app is listening on port 9001.'));
+// Health check endpoint
+app.get('/health', (req, res) => {
+	res.status(200).send('OK');
+});
+
+const server = app.listen(9001, '0.0.0.0',() => console.log('Example app is listening on port 9001.'));
+
+// Function to handle the actual cleanup
+const gracefulShutdown = (signal: string) => {
+  console.log(`Received ${signal}. Shutting down gracefully...`);
+  
+  // 1. Stop accepting new requests
+  server.close(() => {
+    console.log('HTTP server closed.');
+    
+    // 2. Close other resources (Add your Valkey/DB logic here later)
+    // if (valkeyClient) await valkeyClient.quit();
+    
+    console.log('Cleanup complete. Exiting.');
+    process.exit(0);
+  });
+
+  // Force exit after 10 seconds if it hangs
+  setTimeout(() => {
+    console.error('Could not close connections in time, forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+};
+
+// Listen for both Ctrl+C (SIGINT) and Docker stop (SIGTERM)
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 
