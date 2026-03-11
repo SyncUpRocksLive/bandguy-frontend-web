@@ -10,6 +10,9 @@ const PORT: number = parseInt(process.env.PORT || '9000', 10);
 
 // Use a secret for signing cookies
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'localsecret';
+if (COOKIE_SECRET === 'localsecret' && process.env.NODE_ENV === 'production') {
+	console.warn("WARNING: Using default cookie secret in production! This is not secure. Please set the COOKIE_SECRET environment variable to a strong, unique value.");
+}
 
 const app: Express = express();
 

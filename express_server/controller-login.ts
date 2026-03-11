@@ -1,13 +1,22 @@
 import core, { Request, Response, NextFunction } from 'express';
 
-const USERS: string[] = (process.env.USERS || "john,jane,phil,fox,mario").split(",").map((s) => s.trim()).filter((s): s is string => !!s);
+let default_users: String = "";
+if (process.env.NODE_ENV !== 'production') {
+	default_users = "john|j,jane|j,phil|p,fox|f,mario|m";
+}
+
+const USERS: Map<string, string> = new Map((process.env.USERS || default_users).split(",").map((s) => s.trim().split("|") as [string, string]));
+
+if (USERS.size === 0) {
+	console.warn("No users defined! Please set the USERS environment variable in the format 'username|password,username2|password2'");
+}
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
     const user = req.signedCookies?.user;
 
     // 1. Check if the signed cookie exists and hasn't been tampered with
     // 2. Verify the user is still in your allowed USERS list
-    if (user && typeof user === 'string' && USERS.includes(user)) {
+    if (user && typeof user === 'string' && USERS.has(user)) {
         // If everything is good, proceed to the next function
 		(req as any).currentUser = user;
         return next();
@@ -24,7 +33,7 @@ export function useLogin(app: core.Express) {
 		const user = req.signedCookies?.user;
 
 		// Check if user exists, is not false (tamper check), and is allowed
-		if (user && typeof user === 'string' && USERS.includes(user)) {
+		if (user && typeof user === 'string' && USERS.has(user)) {
 			return res.send({ username: user });
 		}
 
@@ -36,8 +45,13 @@ export function useLogin(app: core.Express) {
 	});
 
 	app.post('/user/login', (req, res) => {
-		if (req.body.username && req.body.username.length > 0 && USERS.includes(req.body.username)) {
-			console.log(`User '${req.body.username}' Logged In`);
+		const user = req.body.username;
+		const password = req.body.password;
+
+		console.log(`Login attempt for user '${user}' with password '${password}'`);
+
+		if (user && user.length > 0 && password && password.length > 0 && USERS.has(user) && password === USERS.get(user)) {
+			console.log(`User '${user}' Logged In`);
 			var hour = 3600000;
 			res.cookie('user', req.body.username, {
 				signed: true,     // This is the "encryption" (signing)
@@ -49,7 +63,7 @@ export function useLogin(app: core.Express) {
 			res.sendStatus(200);
 		}
 		else {
-			console.log(`Failed login attempt for user '${req.body.username}' - allowed users are: ${USERS.join(", ")}`);
+			console.log(`Failed login attempt for user '${req.body.username}' - allowed users are: ${Array.from(USERS.keys()).join(", ")}`);
 			res.sendStatus(401);
 		}
 	});

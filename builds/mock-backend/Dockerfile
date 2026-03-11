@@ -20,8 +20,6 @@ COPY express_server/data/ ./data
 
 # 1. Set the internal default for the Node app
 ENV PORT=9000
-ENV COOKIE_SECRET=localsecret
-ENV USERS=""
 
 # 2. Document the port for Traefik/Docker
 EXPOSE 9000

@@ -4,12 +4,13 @@ import Button from 'react-bootstrap/Button';
 
 const LoginForm = () => {
 	const [newUserName, setNewUserName] = useState('');
+	const [newPassword, setNewPassword] = useState('');
 
 	const login = async () => {
 		const response = await fetch(`/api/user/login`, { 
 			method: "POST", 
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ username: newUserName })
+			body: JSON.stringify({ username: newUserName, password: newPassword })
 		});
 
 		if (response.ok) {
@@ -29,16 +30,16 @@ const LoginForm = () => {
 					</div>
 					<div className="form-group mt-3">
 						<label>Password</label>
-						<input type="password" className="form-control mt-1" placeholder="Enter password"/>
+						<input type="password" className="form-control mt-1" placeholder="Enter password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}/>
 					</div>
 					<div className="d-grid gap-2 mt-3"> 
 						<Button variant='primary' type='submit' onClick={(e) => {
 							e.preventDefault();
 
-							if (newUserName.length > 0) {
+							if (newUserName.length > 0 && newPassword.length > 0) {
 								login();
 							} else {
-								alert('Please enter email');
+								alert('Please enter both email and password');
 							}
 						}}>Submit</Button>
 					</div>
