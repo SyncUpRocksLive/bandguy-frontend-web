@@ -26,17 +26,7 @@ This repository contains the React frontend SPA for local development and testin
 2. Install dependencies:
    npm install
 3. Start local dev server + WebRTC stub:
-   npm run dev
-4. Open the app in your browser at http://localhost:5173
-
-## Running Locally
-
-1. Clone the repo:
-   git clone https://github.com/SyncRock/bandguy-frontend-react.git
-2. Install dependencies:
-   npm install
-3. Start local dev server + WebRTC stub:
-   npm run dev
+   npm run dev (for both express_server and main react)
 4. Open the app in your browser at http://localhost:9000
 
 ## Tests
@@ -55,7 +45,7 @@ This repository contains the React frontend SPA for local development and testin
 [![Discord](https://img.shields.io/badge/Discord-Join%20the%20Jam%20%F0%9F%8E%B6-%235865F2.svg)](https://discord.gg/YTxrm3M93A)
 
 
-[![YouTube](https://img.shields.io/badge/YouTube-Follow%20SyncRock-%23FF0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@SyncRock)
+[![YouTube](https://img.shields.io/badge/YouTube-Follow%20SyncRock-%23FF0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@SyncUpRocksLive)
 
 
 ## License

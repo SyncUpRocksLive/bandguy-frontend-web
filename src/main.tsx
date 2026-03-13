@@ -14,6 +14,17 @@ import { PeerOperationMode } from './Support/Stores/Types.ts';
 
 RegisterIconWithLib();
 
+
+// Banish any existing service workers (like GoDaddy's)
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const registration of registrations) {
+            registration.unregister();
+            console.log('Successfully evicted rogue service worker.');
+        }
+    });
+}
+
 const router = createBrowserRouter([
 	{
 		element: <Layout />,

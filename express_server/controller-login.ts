@@ -1,7 +1,10 @@
+import { is } from 'date-fns/locale';
 import core, { Request, Response, NextFunction } from 'express';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 let default_users: String = "";
-if (process.env.NODE_ENV !== 'production') {
+if (!isProduction) {
 	default_users = "john|j,jane|j,phil|p,fox|f,mario|m";
 }
 
@@ -29,6 +32,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
 // setup a simple login/cookie
 export function useLogin(app: core.Express) {
+	if (isProduction) {
+		console.log(`Running in production mode. Using users from environment variable or default: ${Array.from(USERS.keys()).join(", ")}`);
+	}
+
 	app.get('/user/loggedin', (req, res) => {
 		const user = req.signedCookies?.user;
 
@@ -57,6 +64,7 @@ export function useLogin(app: core.Express) {
 				signed: true,     // This is the "encryption" (signing)
 				httpOnly: true,
 				sameSite: 'strict',
+				secure: isProduction, // Only send cookie over HTTPS in production
 				maxAge:  14 * 24 * hour, // 10 days
 				path: '/'
 			});
