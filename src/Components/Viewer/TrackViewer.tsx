@@ -4,7 +4,7 @@ import * as PIXI from 'pixijs'
 
 function TrackViewer() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [pixiApp, setPixiApp] = useState<PIXI.Application | undefined>(undefined);
+    const [, setPixiApp] = useState<PIXI.Application | undefined>(undefined);
 
     useEffect(() => {
         if (!canvasRef.current) {

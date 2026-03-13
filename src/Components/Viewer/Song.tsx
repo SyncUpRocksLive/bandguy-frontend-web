@@ -60,9 +60,9 @@ const Song = () => {
   }, []);
 
   useEffect(() => {
-    const started = Date.now();
+    //const started = Date.now();
 
-    let timer:NodeJS.Timer;
+    //let timer:NodeJS.Timer;
     if (isPlaying) {
       videoPlayer.current!.play();
     //   timer = setInterval(function() {
@@ -82,10 +82,10 @@ const Song = () => {
   }
 
   return () => {
-    if (timer) {
-      console.log("Freeing timeout");
-      clearInterval(timer);
-    }
+    // if (timer) {
+    //   console.log("Freeing timeout");
+    //   clearInterval(timer);
+    // }
   }
   }, [isPlaying])
 

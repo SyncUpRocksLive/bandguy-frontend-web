@@ -33,7 +33,7 @@ class SongViewSync implements IMessageBusHandler {
 	_mode: PeerOperationMode;
 	_localTick: number;
 	_setTick: (tick: number) => void;
-	_timer: NodeJS.Timer | undefined;
+	_timer: NodeJS.Timeout | undefined;
 	_started: number;
 
 	constructor(mode: PeerOperationMode, setTick: (tick: number) => void) {

@@ -1,7 +1,7 @@
 import { PlayIcon } from '@/Constants/AppIcons';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
 import { Log } from '@/Support/Utilities/Logger';
-import { SetOverview, SongOverview } from '@/Types/Sets/SetOverview';
+import { SetOverview } from '@/Types/Sets/SetOverview';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from 'react-bootstrap';
@@ -46,19 +46,19 @@ const SetList = ({mode}:IProp) => {
 		navigate(`/${mode}/sets/${set.id}`);
 	}
 
-	const songName = (song: SongOverview) => {
-		let name = song.title;
-		if (song.artist) {
-			let metadata = song.artist;
-			if (song.year) {
-				metadata += ` ${song.year}`;
-			}
+	// const songName = (song: SongOverview) => {
+	// 	let name = song.title;
+	// 	if (song.artist) {
+	// 		let metadata = song.artist;
+	// 		if (song.year) {
+	// 			metadata += ` ${song.year}`;
+	// 		}
 
-			name = `${name} (${metadata})`;
-		}
+	// 		name = `${name} (${metadata})`;
+	// 	}
 
-		return name;
-	} 
+	// 	return name;
+	// } 
 
 	// TODO: Make bootstrap cards
 	const getSetDetails = (set:SetOverview) => {
