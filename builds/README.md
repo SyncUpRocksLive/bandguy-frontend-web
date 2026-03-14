@@ -1,5 +1,5 @@
 docker build \
-    -t ghcr.io/syncuprockslive/bandguy-frontend-react:v0.0.2 \
+    -t ghcr.io/syncuprockslive/bandguy-frontend-react:v0.0.3 \
     -t ghcr.io/syncuprockslive/bandguy-frontend-react:latest \
     -f builds/frontend/Dockerfile .
 
