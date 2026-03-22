@@ -1,14 +1,14 @@
 import { PlayIcon } from '@/Constants/AppIcons';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
 import { Log } from '@/Support/Utilities/Logger';
-import { SetOverview } from '@/Types/Sets/SetOverview';
+import { SetOverview, SongOverview } from '@/Types/Sets/SetOverview';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from 'react-bootstrap';
-import { SetQueryResponse } from './Types';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { dispatch } from '@/Support/Stores/PrimaryStore';
+import { ApiResponseBase } from './Types';
 
 interface IProp {
 	mode: PeerOperationMode
@@ -30,9 +30,11 @@ const SetList = ({mode}:IProp) => {
 	const { data, isLoading } = useQuery({
 		queryKey: ['my.setlist'],
 		queryFn: async () => {
-			const data = await fetch(`/api/sets`, { method: "GET", headers: { "Content-Type": "application/json" }});
-			const json: SetQueryResponse = await data.json()
-			return json.sets;
+			Log('verbose', `my.setlist: downloading...`);
+			const data = await fetch(`/api/legacy/sets`, { method: "GET", headers: { "Content-Type": "application/json" }});
+			const response: ApiResponseBase<SetOverview[]> = await data.json();
+			Log('verbose', `my.setlist: ${JSON.stringify(response)}`);
+			return response.data ?? [];
 		},
 		refetchInterval: 60000,
 		staleTime: 60000,

@@ -2,9 +2,6 @@ export interface SongOverview {
 	id: string;	// Globally unique id of song
 	version: number; // timestamp of last change - for caching
 	title: string;
-	artist?: string;
-	genre?: string;
-	year?: string;
 }
 
 export interface SetOverview {

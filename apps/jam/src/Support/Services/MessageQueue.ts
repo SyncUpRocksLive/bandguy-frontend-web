@@ -7,7 +7,7 @@ export interface MessageResponse {
 
 export class Messages {
 	static async getMessages() {
-		const data = await fetch(`/api/message/read`, { method: "POST", headers: { "Content-Type": "application/json" }});
+		const data = await fetch(`/api/legacy/message/read`, { method: "POST", headers: { "Content-Type": "application/json" }});
 		const json: MessageResponse = await data.json()
 		return json;
 	}
@@ -19,6 +19,6 @@ export class Messages {
 			sentUtc: getUnixTime(new Date()),
 			messageData: data
 		};
-		await fetch(`/api/message/send/${to}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(msg)});
+		await fetch(`/api/legacy/message/send/${to}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(msg)});
 	}
 }

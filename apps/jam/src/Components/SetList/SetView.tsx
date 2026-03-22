@@ -7,10 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useParams } from "react-router";
-import { SongOverview } from "@/Types/Sets/SetOverview";
+import { SetOverview, SongOverview } from "@/Types/Sets/SetOverview";
 import { TrackFormat } from "@/Types/Sets/SongDetail";
 import SongView from "./SongView";
-import { SetQueryResponse, SongDetailResponse } from "./Types";
+import { ApiResponseBase } from "./Types";
 import { getSongStore } from "@/Support/Stores/SongStore";
 
 interface IProp {
@@ -37,9 +37,9 @@ const SetView = ({mode}:IProp) => {
 	const { data, isLoading } = useQuery({
 		queryKey: ['setlist', currentSetId],
 		queryFn: async () => {
-			const data = await fetch(`/api/sets`, { method: "GET", headers: { "Content-Type": "application/json" }});
-			const json: SetQueryResponse = await data.json()
-			return json.sets.find((s) => s.id === currentSetId);
+			const data = await fetch(`/api/legacy/sets`, { method: "GET", headers: { "Content-Type": "application/json" }});
+			const response: ApiResponseBase<SetOverview[]> = await data.json();
+			return response.Data?.find((s) => s.id === currentSetId);
 		},
 		refetchInterval: 60000,
 		staleTime: 60000,
