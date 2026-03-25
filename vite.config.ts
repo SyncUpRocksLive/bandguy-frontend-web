@@ -6,8 +6,14 @@ export default defineConfig({
   root: 'public',
   
   server: {
+	host: true,
     port: 9000,
     strictPort: true,
+	allowedHosts: [
+      'syncup.local', // local dev, using host file
+      'syncup.rocks', // Add your production/staging domain too while you're at it!
+      '.local'        // Or use a wildcard for any .local address
+    ],
     proxy: {
       // 1. Send /jam traffic to the React App dev server (on 5173)
       '/jam': {

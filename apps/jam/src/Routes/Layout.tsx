@@ -16,7 +16,7 @@ const Layout = () => {
 		queryKey: ['login.state'],
 		queryFn: async () => {
 			Log('verbose', 'Checking login state...');
-			const data = await fetch(`/api/user/auth/loggedin`, { method: "GET", headers: { "Content-Type": "application/json" }});
+			const data = await fetch(`/api/auth/loggedin`, { method: "GET", headers: { "Content-Type": "application/json" }});
 			const json = await data.json();
 			Log('verbose', `Checking login state... ${data.status} ${JSON.stringify(json)}`);
 			if (data.status === 401 || json.data.isLoggedIn === false) {

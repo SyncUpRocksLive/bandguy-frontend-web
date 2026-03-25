@@ -56,7 +56,7 @@ const UserProfile = () => {
 							</Button>
 							<Button className='sm' variant='dark' onClick={() => {
 								setShow(false);
-								window.location.assign('/api/user/logout');
+								window.location.assign('/api/auth/logout');
 							}}>
 								Logout
 							</Button>
