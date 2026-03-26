@@ -1,15 +1,16 @@
-# BandGuy Frontend (React)
-Real-time collaborative band rehearsal tool — frontend SPA for SyncRock's BandGuy project
-
 BandGuy helps bands rehearse together online with synchronized playback of lyrics and tracks. 
-This repository contains the React frontend SPA for local development and testing.
+This repository contains the React frontend SPA. This repo is configured as a monorepo:
+
+- Main Vite Server is 'static', listening on 0.0.0.0:9000 
+  - serving up static data from public/
+  - It will proxy to the jam/ SPA app port (/jam is listening to port 5173)
+  - each sub spa will handle some portion of the over site experience. Looking to not have a single SPA running tons of components, modules, and state. Additional, SPAs are free to choose their own stack (react, vue, svelte, vanilla js)  
 
 ## Features (Proof-of-Concept)
 - React SPA for local rehearsal sessions
 - Browser-based lyric file caching
 - Two track playback types
 - WebRTC-based network sync
-- Sample login/signout for testing
 
 ## Repo Structure
 - `/apps` – Each subfolder is a SPA of its own. Instead of one massive SPA, hard to deploy, edit, and large memory/download footprint - break major app areas into their own SPAs. For instance, user profile editing has nothing at all to do with jamming. And, we can unload jam SPA when going to edit user profile, or in track builder modes.
@@ -20,13 +21,24 @@ This repository contains the React frontend SPA for local development and testin
 
 ## Running Locally
 
+### Tools
+- VSCode
+- .Net 10 (Visual Studio or dotnet build/run)
+- npm v24
+- docker compose
+
 1. Clone the repo:
-   git clone https://github.com/SyncRock/bandguy-frontend-react.git
+   - git clone https://github.com/SyncRock/bandguy-frontend-react.git
+   - git clone https://github.com/SyncRock/bandguy-api-server.git
 2. Install dependencies:
-   npm install
+   - npm run install-all
 3. Start local dev server + WebRTC stub:
-   npm run dev (for both express_server and main react)
-4. Open the app in your browser at http://localhost:9000
+   - npm run dev-jam
+4. in bandguy-api-server/docker
+   - docker compose up
+5. build and run the .Net bandguy-api-server/backend
+6. setup a fake host/static in host file: syncup.local 127.0.0.1
+7. Open the app in your browser at http://syncup.local:7080/
 
 ## Tests
 - Run unit/component tests:
@@ -35,7 +47,6 @@ This repository contains the React frontend SPA for local development and testin
   npm run storybook
 
 ## Contributing
-- Use `npm run dev` for local development
 - Keep experiments in separate branches
 - Storybook components should be documented with examples
 
