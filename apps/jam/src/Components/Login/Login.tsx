@@ -6,6 +6,8 @@ const LoginForm = () => {
 	const [newUserName, setNewUserName] = useState('');
 	const [newPassword, setNewPassword] = useState('');
 
+	// TODO Share ['login.state'] cache
+
 	const login = async () => {
 		const response = await fetch(`/api/user/login`, { 
 			method: "POST", 
@@ -20,39 +22,54 @@ const LoginForm = () => {
 	};
 
 	return (
-		<div className="Auth-form-container">
-			<form className="Auth-form">
-				<div className="Auth-form-content">
-					<h3 className="Auth-form-title">Sign In</h3>
-					<div className="form-group mt-3">
-						<label>Email address</label>
-						<input type="email" className="form-control mt-1" placeholder="Enter email" value={newUserName} onChange={(e) => setNewUserName(e.target.value)}/>
+		<div className="Auth-form-container d-flex align-items-center justify-content-center" 
+			style={{ 
+				minHeight: '100vh',
+				background: 'rgba(0, 0, 0, 0.4)' // Darkens the background image slightly for focus
+			}}>
+			<div className="Auth-form p-5 shadow-lg rounded text-light" 
+				style={{ 
+					maxWidth: '420px', 
+					background: 'rgba(33, 37, 41, 0.85)', // Semi-transparent Charcoal
+					backdropFilter: 'blur(10px)',         // The "Frosty" look
+					border: '1px solid rgba(255, 255, 255, 0.1)' 
+				}}>
+				
+				<div className="Auth-form-content text-center">
+					<h2 className="mb-4 fw-bold tracking-tight" style={{ letterSpacing: '1px' }}>
+						SYNC ROCK LIVE ! <span className="text-primary">BETA</span>
+					</h2>
+					
+					<div className="p-3 mb-4 rounded border-0" 
+						style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+						<p className="small mb-0 opacity-75">
+							🎸 <strong>Welcome to the stage!</strong><br />
+							Access is currently restricted to registered beta users.
+						</p>
 					</div>
-					<div className="form-group mt-3">
-						<label>Password</label>
-						<input type="password" className="form-control mt-1" placeholder="Enter password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}/>
-					</div>
-					<div className="d-grid gap-2 mt-3"> 
-						<Button variant='primary' type='submit' onClick={(e) => {
-							e.preventDefault();
 
-							if (newUserName.length > 0 && newPassword.length > 0) {
-								login();
-							} else {
-								alert('Please enter both email and password');
-							}
-						}}>Submit</Button>
+					<div className="d-grid gap-3 mt-4">
+						<Button 
+							variant="primary" 
+							size="lg"
+							className="py-3 fw-bold border-0"
+							style={{ 
+								backgroundColor: '#0d6efd', 
+								boxShadow: '0 4px 15px rgba(13, 110, 253, 0.3)' 
+							}}
+							href="/api/auth/login" // can re-route returnUrl=/jam/hello
+						>
+							Sign In
+						</Button>
 					</div>
-					<div className="row">
-						<div className="col-sm">
-							Forgot <a href="#">password?</a>
-						</div>
-						<div className="col-sm-auto">
-							<a href="#">Create Account</a>
-						</div>
+
+					<div className="mt-5 pt-3 border-top border-secondary opacity-50">
+						<p className="x-small mb-0">
+							Lets Rock! 🤘
+						</p>
 					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 	)
 }

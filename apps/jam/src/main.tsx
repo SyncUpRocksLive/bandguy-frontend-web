@@ -42,7 +42,7 @@ const router = createBrowserRouter([
 			{ path:"*", element: <div>404 - Doesn't Exist. These are not the droids you are looking for!</div>}
 		],
 	}
-], { basename: '/jam/' });
+], { basename: '/jam' });
 
 const queryClient = new QueryClient()
 
