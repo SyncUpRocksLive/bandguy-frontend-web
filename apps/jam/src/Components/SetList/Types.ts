@@ -6,6 +6,11 @@ export interface ApiResponseBase<T> {
     errorMessage?: string;
 }
 
+export interface ApiResponse {
+    success: boolean;
+    errorMessage?: string;
+}
+
 export interface LoggedInStatus {
     isLoggedIn: boolean;
     userId: string;

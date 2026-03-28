@@ -18,7 +18,7 @@ const HostModeStatus = () => {
 
 	const bootFromband = (u: ConnectedUser) => {
 		LogInfo(`Kicking User:Instance (${u.username} out of band!)`);
-		BroadcastMessage({data: { type: MessageBusActionType.KICKOUT, username: u.username, instance: '' }});
+		BroadcastMessage({data: { type: MessageBusActionType.KICKOUT, userId: u.userId, instance: '' }});
 		setShow(false);
 	};
 

@@ -23,11 +23,12 @@ const FollowerService = () => {
 	useQuery({
 		queryKey: ['channel.list'],
 		queryFn: async () => {
-			const newChannels = await JamChannels.getChannelList();
-			const otherChannels = Object.keys(newChannels)
-				.filter((k) => k !== user!.username)
-				.map((k) => newChannels[k].sort((a, b) => a.timestamp - b.timestamp))
-				.flat();
+			const allChannels = await JamChannels.getChannelList();
+
+			// Ignore our own channels
+			const otherChannels = allChannels
+				.filter((k) => k.hostUser !== user!.userId)
+				.sort((a, b) => a.timestamp - b.timestamp)
 
 			let changed = false;
 			const currentLength = availableRemoteChannels?.length ?? 0;

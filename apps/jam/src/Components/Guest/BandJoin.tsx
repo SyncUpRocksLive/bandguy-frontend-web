@@ -31,7 +31,7 @@ const BandJoin = () => {
 			<b>Available Jam Rooms:</b>
 			<ul>
 				{ channelData && Object.entries(channelData).map(([key, value]) =>
-					(<li key={key}><button type='button' onClick={() => joinChannel(value)}>Join Band '{value.hostUser}'</button></li>)
+					(<li key={key}><button type='button' onClick={() => joinChannel(value)}>Join Band '{value.friendlyName}'</button></li>)
 				)}
 			</ul>
 		</div>

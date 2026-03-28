@@ -68,7 +68,7 @@ export class ConnectFlow implements IRemoteClientConnectionFlow, IMessageBusHand
 			}
 
 			if (m.messageData.type === MessageDataType.RTCSessionDescription) {
-				LogInfo(`${m.from} -> ${m.to} RTCSessionDescription Type: ${m.messageData.value.type}`);
+				LogInfo(`${m.fromUserId} -> ${m.toUserId} RTCSessionDescription Type: ${m.messageData.value.type}`);
 				if (this.state === ConnectState.ANSWER) {
 					if (m.messageData.value.type === 'answer') {
 						client.peerConnection!.setRemoteDescription(m.messageData.value);
@@ -78,7 +78,7 @@ export class ConnectFlow implements IRemoteClientConnectionFlow, IMessageBusHand
 					LogError(`GUEST: Unexpected message. Not waiting for answer - our state is ${this.state}`);
 				}
 			} else if (m.messageData.type === MessageDataType.RTCIceCandidate) {
-				LogInfo(`${m.from} -> ${m.to} RTCIceCandidate`);
+				LogInfo(`${m.fromUserId} -> ${m.toUserId} RTCIceCandidate`);
 				if (this.state === ConnectState.PEERING) {
 					client.peerConnection!.addIceCandidate(m.messageData.value);
 				} else {
@@ -106,8 +106,10 @@ export class ConnectFlow implements IRemoteClientConnectionFlow, IMessageBusHand
 			isBandLeader: true,
 			role: 'unset',
 			username: channel.hostUser,
+			userId: channel.hostUser,
 			client: {
-				name: channel.hostUser,
+				userId: channel.hostUser,
+				username: channel.hostUser,
 				state: ConnectState.NOT_SET,
 			}
 		};
@@ -166,7 +168,7 @@ export class ConnectFlow implements IRemoteClientConnectionFlow, IMessageBusHand
 			this.state = ConnectState.OFFER;
 
 			LogInfo(`GUEST: Forwarding offer ${_store.user.username} -> ${this._channel.hostUser}`);
-			Messages.sendMessage(channel.hostUser, _store.user.username, {
+			Messages.sendMessage(channel.hostUser, {
 				type: MessageDataType.RTCSessionDescription,
 				value: {
 					sdp: offer.sdp!,
@@ -200,7 +202,7 @@ export class ConnectFlow implements IRemoteClientConnectionFlow, IMessageBusHand
 				}
 
 				LogInfo(`GUEST Forwarding onicecandidate ${_store.user!.username} -> ${this._channel.hostUser}`);
-				Messages.sendMessage(this._channel.hostUser, _store.user!.username, {
+				Messages.sendMessage(this._channel.hostUser, {
 					type: MessageDataType.RTCIceCandidate,
 					value: e.candidate!
 				});
