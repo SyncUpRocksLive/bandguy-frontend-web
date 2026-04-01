@@ -69,7 +69,7 @@ const SetView = ({mode}:IProp) => {
 				// Check if file already found...
 				if (!(await songStore.exists(song!, t.id))) {
 					LogInfo(`Downloading track information for ${set.id}/${song}/${t.id} ${t.name}`);
-					let trackUrl = `/api/legacy/user/song/track/${t.id}/data`;
+					let trackUrl = `/api/legacy/user/song/track/${currentSetId}/${t.id}/data`;
 					if (t.format === TrackFormat.Lyric) {
 						const trackResponse = await fetch(trackUrl, { method: "GET", headers: { 'pragma': 'no-cache', 'cache-control': 'no-store', 'cache': 'no-store' }});
 						if (trackResponse.ok) {
