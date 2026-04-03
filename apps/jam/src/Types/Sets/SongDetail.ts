@@ -19,17 +19,26 @@ export interface Track {
 	name: TrackType;
 	type: TrackType;
 	format: TrackFormat;
-	createdAt: number;
+	createdAtMsUtc: number;
 	versionNumber: number;
 	configuration?: string;
 }
 
 export interface Song {
 	id: number;
-	ownerId: string;
+	musicianId: string;
 	name: string;
 	durationMilliseconds: number;
-	createdAt: number;
+	createdAtMsUtc: number;
+	setOrder: number;
 	configuration?: string;
 	tracks: Track[];
+}
+
+export interface SetComplete {
+	musicianId: number;
+	id: number;
+	Name: string;
+	createdAtMsUtc: number;
+	songs: Song[];
 }

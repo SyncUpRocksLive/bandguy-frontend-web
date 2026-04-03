@@ -15,21 +15,21 @@ export default defineConfig({
       '.local'        // Or use a wildcard for any .local address
     ],
     proxy: {
-      // 1. Send /jam traffic to the React App dev server (on 5173)
       '/jam': {
         target: 'http://localhost:5173',
         changeOrigin: true,
         ws: true // Crucial for WebRTC signals/WebSockets
-      },
-      
-      // 2. Send /profile traffic to the Profile App dev server (on 5174)
-      '/profile': {
+      },      
+      '/mixingroom': {
         target: 'http://localhost:5174',
         changeOrigin: true,
         ws: true
       },
-
-      // 3. Send /api traffic to your .NET API (on 9001)
+      '/profile': {
+        target: 'http://localhost:5175',
+        changeOrigin: true,
+        ws: true
+      },
       '/api': {
         target: 'http://localhost:9001',
         changeOrigin: true,

@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useParams } from "react-router";
 import { SetOverview, SongOverview } from "@/Types/Sets/SetOverview";
-import { Song, TrackFormat } from "@/Types/Sets/SongDetail";
+import { SetComplete, Song, TrackFormat } from "@/Types/Sets/SongDetail";
 import SongView from "./SongView";
 import { ApiResponseBase } from "./Types";
 import { getSongStore } from "@/Support/Stores/SongStore";
@@ -18,7 +18,7 @@ interface IProp {
 }
 
 const SetView = ({mode}:IProp) => {
-	const { currentSetId, currentSongId, songPlayStatus } = pickStore<'currentSetId'|'currentSongId'|'songPlayStatus'>();
+	const { currentSetId, currentSongId, songPlayStatus, connectedChannelDetail } = pickStore<'currentSetId'|'currentSongId'|'songPlayStatus'|'connectedChannelDetail'>();
 	const { setId } = useParams();
 	const songStore = getSongStore();
 
@@ -37,17 +37,16 @@ const SetView = ({mode}:IProp) => {
 	const { data, isLoading } = useQuery({
 		queryKey: ['setlist', currentSetId],
 		queryFn: async () => {
-			LogVerbose(`Downloading set overview for setId=${currentSetId}`);
-			const data = await fetch(`/api/legacy/user/sets/overview`, { method: "GET", headers: { "Content-Type": "application/json" }});
-			const response: ApiResponseBase<SetOverview[]> = await data.json();
-			const matchedSet = response.data?.find((s) => s.id === currentSetId);
-			LogVerbose(`matchedSet=${matchedSet}`)
-			return matchedSet;
+			LogVerbose(`Downloading set overview for setId=${currentSetId} host=${connectedChannelDetail?.hostUser ?? 'none'}`);
+			const data = await fetch(`/api/legacy/user/sets/complete/${currentSetId}`, { method: "GET", headers: { "Content-Type": "application/json" }});
+			const response: ApiResponseBase<SetComplete> = await data.json();
+
+			return response.data;
 		},
-		refetchInterval: 60000,
-		staleTime: 60000,
+		refetchInterval: false,
+		staleTime: 0,
 		// TODO: ?? cacheTime: 60000,
-		refetchOnMount: false,
+		refetchOnMount: 'always',
 		refetchOnWindowFocus: false,
 		enabled: currentSetId !== undefined,
 	});
@@ -61,23 +60,16 @@ const SetView = ({mode}:IProp) => {
 
 			const set = data;
 			const song = currentSongId;
-
-			LogInfo(`Downloading track information for songId=${song}`);
-			const tracksDetailResponse = await fetch(`/api/legacy/user/song/${song}`, { method: "GET", headers: { "Content-Type": "application/json" }});
-			if (!tracksDetailResponse.ok) {
-				throw Error(`Invalid Set Track '${song}' - no track data!`);
+			const songDetails = set.songs.find((s) => s.id === song);
+			if (!songDetails) {
+				throw Error(`Invalid Set State - song ${song} not found in set ${set.id}`);
 			}
 
-			const songDetails: ApiResponseBase<Song> = await tracksDetailResponse.json();
-			if (!songDetails || !songDetails.data) {
-				throw Error(`Invalid Set Track '${song}' - no track data!`);
-			}
-
-			songDetails.data.tracks.forEach(async (t) => {
+			songDetails.tracks.forEach(async (t) => {
 				// Check if file already found...
 				if (!(await songStore.exists(song!, t.id))) {
 					LogInfo(`Downloading track information for ${set.id}/${song}/${t.id} ${t.name}`);
-					let trackUrl = `/api/legacy/user/song/track/${t.id}/data`;
+					let trackUrl = `/api/legacy/user/song/track/${currentSetId}/${t.id}/data`;
 					if (t.format === TrackFormat.Lyric) {
 						const trackResponse = await fetch(trackUrl, { method: "GET", headers: { 'pragma': 'no-cache', 'cache-control': 'no-store', 'cache': 'no-store' }});
 						if (trackResponse.ok) {
@@ -199,9 +191,9 @@ const SetView = ({mode}:IProp) => {
 							return <li key={s.id}>
 								{/* TODO: Show current song, and queued song {background: currentSongId === s.id ? 'rgba(100,100,200,.8) */}
 								<div style={{overflow: 'hidden', userSelect: 'none', whiteSpace: 'nowrap', padding: '2px 5px 2px 4px'}}>
-									<Button style={{padding: '4px', margin: '1px 0px', width: '100%', textOverflow: 'ellipsis', textAlign: 'start', overflow: 'clip'}} variant='dark' title={`Play ${s.title}`} onClick={() => loadSong(s)} size='lg'>
+									<Button style={{padding: '4px', margin: '1px 0px', width: '100%', textOverflow: 'ellipsis', textAlign: 'start', overflow: 'clip'}} variant='dark' title={`Play ${s.name}`} onClick={() => loadSong(s)} size='lg'>
 										<FontAwesomeIcon icon={PlayIcon} size='lg'/>
-										{` ${s.title}`}
+										{` ${s.name}`}
 									</Button>
 								</div>
 							</li>
@@ -213,7 +205,7 @@ const SetView = ({mode}:IProp) => {
 			<div style={{ flex: '1', background: 'rgba(255,255,255,.2'}}>
 				{loadingTracks && (<div>{`Loading Song ${currentSongId}...`}</div>)}
 				{trackData && song && (
-					<SongView song={song} tracks={trackData.data!.tracks} key={song.id}/>
+					<SongView song={song} tracks={trackData.tracks} key={song.id}/>
 				)}
 			</div>
 		</div>

@@ -1,11 +1,13 @@
 export interface SongOverview {
 	id: number;	// Globally unique id of song
-	version: number; // timestamp of last change - for caching
-	title: string;
+	name: string;
+	setOrder: number;
 }
 
 export interface SetOverview {
+	musicianId: number;
 	id: number;
 	name: string;
+	createdAtMsUtc: number;
 	songs: SongOverview[];
 }

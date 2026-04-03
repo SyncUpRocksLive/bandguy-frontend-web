@@ -33,6 +33,10 @@ indent_size = 4
 indent_style = tab
 indent_size = 4
 
+[*.svelte]
+indent_style = tab
+indent_size = 4
+
 # Matches the exact files either package.json or .travis.yml
 [{package.json,.travis.yml}]
 indent_style = space

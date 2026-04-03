@@ -1,13 +1,13 @@
 import { PlayIcon } from '@/Constants/AppIcons';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
 import { Log } from '@/Support/Utilities/Logger';
-import { SetOverview, SongOverview } from '@/Types/Sets/SetOverview';
+import { SetOverview } from '@/Types/Sets/SetOverview';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
-import { dispatch } from '@/Support/Stores/PrimaryStore';
+import { dispatch, pickStore } from '@/Support/Stores/PrimaryStore';
 import { ApiResponseBase } from './Types';
 
 interface IProp {
@@ -15,6 +15,7 @@ interface IProp {
 }
 
 const SetList = ({mode}:IProp) => {
+	const { user } = pickStore<'user'>();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -28,20 +29,20 @@ const SetList = ({mode}:IProp) => {
 	}, [mode]);
 
 	const { data, isLoading } = useQuery({
-		queryKey: ['my.setlist'],
+		queryKey: ['my.setlist', user?.userId ?? 'none'],
 		queryFn: async () => {
-			Log('verbose', `my.setlist: downloading...`);
-			const data = await fetch(`/api/legacy/user/sets/overview`, { method: "GET", headers: { "Content-Type": "application/json" }});
+			Log('verbose', `my.setlist: downloading for userId=${user.userId}`);
+			const data = await fetch(`/api/legacy/user/sets/overview/${user.userId}`, { method: "GET", headers: { "Content-Type": "application/json" }});
 			const response: ApiResponseBase<SetOverview[]> = await data.json();
 			Log('verbose', `my.setlist: ${JSON.stringify(response)}`);
 			return response.data ?? [];
 		},
-		refetchInterval: 60000,
-		staleTime: 60000,
+		refetchInterval: 600000,
+		staleTime: 0,
 		// TODO ??? cacheTime: 60000,
-		refetchOnMount: true,
+		refetchOnMount: 'always',
 		refetchOnWindowFocus: true,
-		enabled: true,
+		enabled: user?.userId !== undefined,
 	});
 
 	const playSet = (set:SetOverview) => {
@@ -50,26 +51,12 @@ const SetList = ({mode}:IProp) => {
 		navigate(destination);
 	}
 
-	// const songName = (song: SongOverview) => {
-	// 	let name = song.title;
-	// 	if (song.artist) {
-	// 		let metadata = song.artist;
-	// 		if (song.year) {
-	// 			metadata += ` ${song.year}`;
-	// 		}
-
-	// 		name = `${name} (${metadata})`;
-	// 	}
-
-	// 	return name;
-	// } 
-
 	// TODO: Make bootstrap cards
 	const getSetDetails = (set:SetOverview) => {
 		return (
 			<Button variant='dark' style={{padding: '2px 10px 2px 10px'}} onClick={() => playSet(set)}>
 				<FontAwesomeIcon icon={PlayIcon} size='lg'/>
-				{` ${set.name} : ${set.songs.length} songs 5:23:12\x20hrs`}
+				{` ${set.name} : ${set.songs.length} songs 00:00:00\x20hrs`}
 			</Button>
 		)
 	};
