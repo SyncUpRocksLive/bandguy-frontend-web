@@ -1,40 +1,179 @@
 <script lang="ts">
-  import Upload from "./lib/Upload.svelte";
+	// Main mixing room components will be added here
 </script>
 
 <header id="header">
-  <nav>
-    <a href="/">Home</a>
-    <a href="/mixingroom">Mixing Room</a>
-    <a href="/jam">Jam</a>
-  </nav>
+	<nav>
+		<a href="/">Home</a>
+		<a href="/mixingroom">Mixing Room</a>
+		<a href="/jam">Jam</a>
+	</nav>
 </header>
 
 <section id="center">
-  <div>
-    <h3>Coming Soon - Music Mixing Room</h3>
-    <p>Synchronized multi-track editing and mixing for your collaborations</p>
-    <Upload />
-  </div>
+	<div class="studio-controls">
+		<h3>Mixing Room Studio</h3>
+
+
+		<div class="control-grid">
+			<div class="control-item">
+				<div class="icon">🎵</div>
+				<h4>Song Library</h4>
+				<p>
+					Browse and edit your complete song library. Songs can be added
+					to any setlist.
+				</p>
+				<button class="control-btn">Browse Songs</button>
+			</div>
+
+			<div class="control-item">
+				<div class="icon">📋</div>
+				<h4>Setlists</h4>
+				<p>
+					View and edit your setlists. Add or remove songs from your
+					performance lineup.
+				</p>
+				<button class="control-btn">Manage Setlists</button>
+			</div>
+
+			<div class="control-item">
+				<div class="icon">🎛️</div>
+				<h4>Mixing Console</h4>
+				<p>Coming soon: Advanced mixing and audio processing tools.</p>
+				<button class="control-btn" disabled>Coming Soon</button>
+			</div>
+
+			<div class="control-item">
+				<div class="icon">📊</div>
+				<h4>Analytics</h4>
+				<p>Coming soon: Performance analytics and audience insights.</p>
+				<button class="control-btn" disabled>Coming Soon</button>
+			</div>
+		</div>
+	</div>
 </section>
 
 <footer id="spacer"></footer>
 
 <style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-  }
+	:global(body) {
+		margin: 0;
+		padding: 0;
+	}
 
-  header {
-    grid-area: header;
-  }
+	header {
+		grid-area: header;
+	}
 
-  section {
-    grid-area: center;
-  }
+	section {
+		grid-area: center;
+	}
 
-  footer {
-    grid-area: spacer;
-  }
+	footer {
+		grid-area: spacer;
+	}
+
+	.studio-controls {
+		text-align: center;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.studio-controls h3 {
+		font-size: 2.5rem;
+		margin-bottom: 0.5rem;
+		color: #ffffff;
+	}
+
+	.studio-controls > p {
+		font-size: 1.1rem;
+		margin-bottom: 3rem;
+		color: #b0b0b0;
+	}
+
+	.control-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 2rem;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	.control-item {
+		background: rgba(33, 53, 71, 0.8);
+		border: 1px solid rgba(100, 150, 200, 0.3);
+		border-radius: 12px;
+		padding: 2rem;
+		transition: all 0.3s ease;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.control-item:hover {
+		border-color: #6b9ec4;
+		background: rgba(33, 53, 71, 0.95);
+		transform: translateY(-2px);
+	}
+
+	.icon {
+		font-size: 3rem;
+		margin-bottom: 1rem;
+		opacity: 0.9;
+	}
+
+	.control-item h4 {
+		font-size: 1.4rem;
+		margin-bottom: 0.5rem;
+		color: #e0e0e0;
+	}
+
+	.control-item p {
+		font-size: 0.9rem;
+		color: #a0a0a0;
+		margin-bottom: 1.5rem;
+		line-height: 1.4;
+		flex-grow: 1;
+	}
+
+	.control-btn {
+		background: #239fc4;
+		color: #ffffff;
+		border: none;
+		padding: 0.75rem 1.5rem;
+		border-radius: 6px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.control-btn:hover:not(:disabled) {
+		background: #1a7a9a;
+		transform: translateY(-1px);
+	}
+
+	.control-btn:disabled {
+		background: #555555;
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+
+	@media (max-width: 768px) {
+		.control-grid {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+
+		.studio-controls h3 {
+			font-size: 2rem;
+		}
+
+		.control-item {
+			padding: 1.5rem;
+		}
+	}
 </style>
