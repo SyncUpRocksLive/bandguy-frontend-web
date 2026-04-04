@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found | SyncUp Rocks Live!</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Bungee&family=Courier+Prime:wght@400;700&family=Anton&display=swap" rel="stylesheet">
+
+    <style>
+        .bg-tobacco-burst {
+            background: radial-gradient(circle at center, #78350f 0%, #1c1917 70%, #0c0a09 100%);
+        }
+
+        @keyframes tube-warmth {
+            0%, 100% { opacity: 0.3; transform: scale(1); filter: blur(150px); }
+            50% { opacity: 0.6; transform: scale(1.1); filter: blur(180px); }
+        }
+        .animate-tube { animation: tube-warmth 5s ease-in-out infinite; }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90% { opacity: 0.7; }
+        }
+        .animate-flicker { animation: flicker 4s ease-in-out infinite; }
+
+        .font-vintage { font-family: 'Rye', serif; }
+        .font-stamp { font-family: 'Bungee', cursive; }
+        .font-manual { font-family: 'Courier Prime', monospace; }
+        .font-impact { font-family: 'Anton', sans-serif; }
+
+        .nitro-grain {
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
+            opacity: 0.15;
+        }
+    </style>
+</head>
+<body class="bg-stone-950 font-manual text-stone-300">
+
+<div class="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center bg-tobacco-burst">
+  
+  <div class="absolute inset-0 z-0">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-600/20 rounded-full animate-tube"></div>
+    <div class="absolute inset-0 nitro-grain pointer-events-none"></div>
+  </div>
+
+  <div class="relative z-30 text-center px-6 max-w-5xl">
+    
+    <div class="mb-8">
+       <span class="block text-amber-500 font-manual tracking-[0.4em] text-[10px] uppercase mb-3 opacity-70">ERROR CODE 404</span>
+       <h1 class="font-vintage text-8xl md:text-9xl text-red-600 drop-shadow-[0_6px_0_#450c0c] tracking-tighter mb-4 animate-flicker">
+         404
+       </h1>
+       <p class="text-stone-100 font-stamp text-2xl md:text-3xl tracking-[0.1em] uppercase mb-4">
+         Signal Lost
+       </p>
+       <p class="text-stone-300 font-manual text-base md:text-lg tracking-wide max-w-2xl mx-auto">
+         The page you were looking for didn't make it to the stage. It either moved venues, got cancelled, or never existed in the first place.
+       </p>
+    </div>
+
+    <div class="mt-12 space-y-6">
+      <div>
+        <a href="/" class="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-700 text-stone-950 font-stamp text-lg uppercase tracking-wider transition-colors duration-200">
+          Back to Main Stage
+        </a>
+      </div>
+      <div>
+        <a href="/jam" class="inline-block px-8 py-3 bg-stone-700 hover:bg-stone-600 text-stone-100 font-manual text-sm uppercase tracking-wider transition-colors duration-200">
+          → Enter Jam Session
+        </a>
+      </div>
+      <div class="pt-4 border-t border-stone-800">
+        <p class="text-stone-500 font-manual text-xs tracking-[0.2em] uppercase mb-4">Need help? Jump in:</p>
+        <div class="flex flex-wrap justify-center gap-6">
+          <a target="_blank" href="https://discord.gg/YTxrm3M93A" 
+             class="text-stone-400 hover:text-indigo-400 font-manual text-xs uppercase transition-colors">
+            Discord
+          </a>
+          <a target="_blank" href="https://github.com/orgs/SyncUpRocksLive/repositories" 
+             class="text-stone-400 hover:text-stone-100 font-manual text-xs uppercase transition-colors">
+            GitHub
+          </a>
+          <a target="_blank" href="https://www.youtube.com/@SyncUpRocksLive" 
+             class="text-stone-400 hover:text-red-500 font-manual text-xs uppercase transition-colors">
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-amber-900/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+</div>
+
+</body>
+</html>

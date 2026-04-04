@@ -118,32 +118,38 @@
   .upload-zone {
     position: relative;
     overflow: hidden;
-    padding: 1rem;
-    border: 2px dashed #ccc;
-    background: #f9f9f9;
+    padding: 2rem;
+    border: 2px dashed #4a7c99;
+    background: rgba(33, 53, 71, 0.7);
     cursor: pointer;
     border-radius: 8px;
     width: 100%;
-    max-width: 320px;
-    min-height: 60px;
+    max-width: 360px;
+    min-height: 80px;
     transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
+    color: #e0e0e0;
+  }
+
+  .upload-zone:hover {
+    border-color: #6b9ec4;
+    background: rgba(33, 53, 71, 0.9);
   }
 
   .upload-zone.dragging {
-    border-color: #007bff;
-    background: #f0f7ff;
+    border-color: #239fc4;
+    background: rgba(35, 159, 196, 0.15);
     transform: scale(1.02);
   }
 
   .upload-zone.error {
     border-color: #dc3545;
-    background: #fff5f5;
-    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    color: #ff6b6b;
   }
 
   .progress-bar {
@@ -151,7 +157,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    background-color: rgba(0, 123, 255, 0.2);
+    background-color: rgba(35, 159, 196, 0.3);
     transition: width 0.1s ease-out;
     z-index: 1;
   }
@@ -166,16 +172,19 @@
 
   .label {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    color: #e0e0e0;
   }
 
   .retry-hint {
-    font-size: 0.75rem;
-    opacity: 0.8;
-    margin-top: 2px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 4px;
+    color: #b0b0b0;
   }
 
   .upload-zone:disabled {
     cursor: not-allowed;
+    opacity: 0.6;
   }
 </style>
