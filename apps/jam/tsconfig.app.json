@@ -7,7 +7,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "moduleResolution": "bundler", // Crucial for Vite 8 / Node 24
-    "baseUrl": ".", 
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../../packages/shared/src/*"]

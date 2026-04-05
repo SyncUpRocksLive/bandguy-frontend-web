@@ -7,8 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useParams } from "react-router";
-import { SetOverview, SongOverview } from "@/Types/Sets/SetOverview";
-import { SetComplete, Song, TrackFormat } from "@/Types/Sets/SongDetail";
+import { SongOverview, SetComplete, TrackFormat } from "@shared/services/syncuprocks/musician/Types";
 import SongView from "./SongView";
 import { ApiResponseBase } from "./Types";
 import { getSongStore } from "@/Support/Stores/SongStore";
@@ -25,7 +24,7 @@ const SetView = ({mode}:IProp) => {
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			if (mode !== PeerOperationMode.Guest) {
-				dispatch({type: ActionType.UPDATE, update: {currentSetId: parseInt(setId, 10), peerMode: mode}});
+				dispatch({type: ActionType.UPDATE, update: {currentSetId: parseInt(setId!, 10), peerMode: mode}});
 			}
 		}, 1);
 

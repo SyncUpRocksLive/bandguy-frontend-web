@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { appState } from "../../State.svelte";
-
+	import { appState } from "@/State.svelte";
+	
 </script>
 
 <section id="center">
 	<div class="studio-controls">
-		<h3>Mixing Room Studio - {appState.settings.name}</h3>
+		<h3>Mixing Room Studio</h3>
 
 		<div class="control-grid">
 			<div class="control-item">

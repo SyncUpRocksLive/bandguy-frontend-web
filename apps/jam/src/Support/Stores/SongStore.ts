@@ -1,4 +1,4 @@
-import { TrackFormat } from "@/Types/Sets/SongDetail";
+import { TrackFormat } from "@shared/services/syncuprocks/musician/Types";
 import { Log, LogError, LogInfo } from "../Utilities/Logger";
 
 export interface SongBlob {
