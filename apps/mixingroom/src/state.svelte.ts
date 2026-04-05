@@ -8,10 +8,10 @@ interface UserProfile {
 	status: 'online' | 'offline';
 }
 
-export type ViewArea = 'Home' | 'SongLibrary' | 'Setlists' | 'Mixer';
+export type ViewArea = 'Home' | 'SongLibrary' | 'Setlists' | 'Notes';
 
 function isValidView(name: string): name is ViewArea {
-	return ['Home', 'SongLibrary', 'Setlists', 'Mixer'].includes(name);
+	return ['Home', 'SongLibrary', 'Setlists', 'Notes'].includes(name);
 }
 
 class AppState {

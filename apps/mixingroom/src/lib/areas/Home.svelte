@@ -42,7 +42,7 @@
 					Record and manage scratch notes... favorite songs, setlist ideas,
 					or just jot down thoughts for your next practice session.
 				</p>
-				<button class="control-btn">Open Notes</button>
+				<button class="control-btn" onclick={() => appState.setView('Notes')}>Open Notes</button>
 			</div>
 
 			<div class="control-item">

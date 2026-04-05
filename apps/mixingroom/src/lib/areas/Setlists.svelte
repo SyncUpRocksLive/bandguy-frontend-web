@@ -4,8 +4,6 @@
 
 </script>
 
-<button onclick={() => appState.setView('Home')}>Go Home</button>
-
 <section>
 	<div class="song-library">
 		<h3>Setlist</h3>
