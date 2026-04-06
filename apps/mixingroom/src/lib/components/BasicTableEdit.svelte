@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { stopPropagation } from "svelte/legacy";
+
 
 	// Generic types
 	export interface ColumnDefinition<T> {
@@ -489,7 +491,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.715);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -503,6 +505,9 @@
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		max-width: 400px;
 		width: 90%;
+		z-index: 1001;
+		position: relative;
+		pointer-events: auto;
 	}
 
 	.modal-dialog h4 {
