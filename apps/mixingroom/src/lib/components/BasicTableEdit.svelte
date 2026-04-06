@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { stopPropagation } from "svelte/legacy";
 
+	// TODO: Use keyboard events for save/cancel in edit mode, and maybe for delete confirmation as well. Also, navigating the list with arrow keys would be a nice enhancement for power users.
 
 	// Generic types
 	export interface ColumnDefinition<T> {

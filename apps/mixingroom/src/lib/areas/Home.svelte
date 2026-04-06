@@ -9,16 +9,6 @@
 
 		<div class="control-grid">
 			<div class="control-item">
-				<div class="icon">🎵</div>
-				<h4>Song Library</h4>
-				<p>
-					Browse and edit your complete song library. Songs can be added
-					to any setlist.
-				</p>
-				<button class="control-btn" onclick={() => appState.setView('SongLibrary')}>Browse Songs</button>
-			</div>
-
-			<div class="control-item">
 				<div class="icon">📋</div>
 				<h4>Setlists</h4>
 				<p>
@@ -26,6 +16,16 @@
 					performance lineup.
 				</p>
 				<button class="control-btn" onclick={() => appState.setView('Setlists')}>Manage Setlists</button>
+			</div>
+			
+			<div class="control-item">
+				<div class="icon">🎵</div>
+				<h4>Song Library</h4>
+				<p>
+					Browse and edit your complete song library. Songs can be added
+					to any setlist.
+				</p>
+				<button class="control-btn" onclick={() => appState.setView('SongLibrary')}>Browse Songs</button>
 			</div>
 
 			<div class="control-item">

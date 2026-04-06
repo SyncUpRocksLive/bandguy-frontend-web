@@ -10,12 +10,10 @@ export const GetAuthState = async (slide: boolean = false) : Promise<LoggedInSta
 	Log('verbose', `Checking login state... ${data.status}`);
 	if (data.status === 401 || !response.data || response.data.isLoggedIn === false || !response.data.userId || !response.data.username) {
 		Log('verbose', 'Checking login state... Unauthorized');
-		// TODO: Capture logInUrl
 		return null;
 	}
 	else if (!response.success) {
-		Log('verbose', `Checking login state... unknown failure ${response.errorMessage}`);
-		// TODO: Capture logInUrl
+		Log('error', `Checking login state... unknown failure ${response.errorMessage}`);
 		return null;
 	}
 

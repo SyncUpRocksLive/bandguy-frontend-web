@@ -6,6 +6,8 @@ const logColors = {
 	'error': 'red',
 }
 
+// TODO: Fix the log level checks to be more efficient (e.g., using a numeric level or a Set of enabled levels) to avoid redundant checks in each log function. For now, this is simple and clear.
+
 export const LogVerbose = (message: string) => {
 	if (LogMode === 'verbose') {
 		console.log(`%cVERBOSE: %c${message}`, `color: ${logColors['verbose']};`, 'color: inherit;');
@@ -21,7 +23,6 @@ export const LogInfo = (message: string) => {
 export const LogError = (message: string) => {
 	console.log(`%cERROR: %c${message}`, `color: ${logColors['error']};`, 'color: inherit;');
 }
-
 
 export const Log = (mode: 'verbose'|'info'|'error', message: string) => {
 	if (LogMode === mode || mode === 'error') {
