@@ -1,7 +1,12 @@
+
 export interface SongOverview {
 	id: number;	// Globally unique id of song
 	name: string;
 	setOrder: number;
+    tracks?: number,
+	createdAtMsUtc?: number;
+	durationMs?: number,
+	configuration?: string
 }
 
 export interface SetOverview {

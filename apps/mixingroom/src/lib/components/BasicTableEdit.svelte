@@ -81,6 +81,13 @@
 
 	function handleDeleteClick(item: any) {
 		itemToDelete = item;
+
+		if (itemToDelete.id < 0) {
+			dispatch('delete', { item: itemToDelete });
+			itemToDelete = null;
+			return;
+		}
+
 		showDeleteConfirm = true;
 	}
 

@@ -1,5 +1,5 @@
 import { ApiResponseBase } from "@shared/services/syncuprocks/Types";
-import { SetComplete, SetOverview } from "@shared/services/syncuprocks/musician/Types";
+import { SetComplete, SetOverview, SongOverview } from "@shared/services/syncuprocks/musician/Types";
 import { LogError } from "@shared/services/Logger";
 
 export type Result<T, E = Error> = 
@@ -73,6 +73,25 @@ export const getSetsOverview = async (musicianId: string) : Promise<Result<SetOv
 
 	const data: ApiResponseBase<SetOverview[]> = await response.json();
 	error = checkErrorResponse(data, `fetching sets overview for musicianId=${musicianId}`, false);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: data.data ?? [] };
+}
+
+/**
+ * Fetches the overview list of songs for a specific musician.
+ * @param musicianId Musician Identifier
+ * @returns 
+ */
+export const getSongsOverview = async (musicianId: string) : Promise<Result<SongOverview[]>> => {
+	const response = await fetch(`/api/legacy/user/songs/overview/${musicianId}`, { method: "GET", headers: { "Content-Type": "application/json" }});
+	let error = checkHttpResponse(response, `fetching songs overview for musicianId=${musicianId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<SongOverview[]> = await response.json();
+	error = checkErrorResponse(data, `fetching songs overview for musicianId=${musicianId}`, false);
 	if (error)
 		return { ok: false, error };
 
