@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { router } from "@/Router.svelte";
 	import { appState } from "@/State.svelte";
 	
 </script>
 
 <section id="center">
 	<div class="studio-controls">
-		<h3>Mixing Room Studio</h3>
 
 		<div class="control-grid">
 			<div class="control-item">
@@ -15,9 +15,9 @@
 					View and edit your setlists. Add or remove songs from your
 					performance lineup.
 				</p>
-				<button class="control-btn" onclick={() => appState.setView('Setlists')}>Manage Setlists</button>
+				<button class="control-btn" onclick={() => router.navigate('Setlists')}>Manage Setlists</button>
 			</div>
-			
+
 			<div class="control-item">
 				<div class="icon">🎵</div>
 				<h4>Song Library</h4>
@@ -25,7 +25,7 @@
 					Browse and edit your complete song library. Songs can be added
 					to any setlist.
 				</p>
-				<button class="control-btn" onclick={() => appState.setView('SongLibrary')}>Browse Songs</button>
+				<button class="control-btn" onclick={() => router.navigate('SongLibrary')}>Browse Songs</button>
 			</div>
 
 			<div class="control-item">
@@ -42,7 +42,7 @@
 					Record and manage scratch notes... favorite songs, setlist ideas,
 					or just jot down thoughts for your next practice session.
 				</p>
-				<button class="control-btn" onclick={() => appState.setView('Notes')}>Open Notes</button>
+				<button class="control-btn" onclick={() => router.navigate('Notes')}>Open Notes</button>
 			</div>
 
 			<div class="control-item">

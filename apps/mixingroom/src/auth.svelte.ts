@@ -61,9 +61,11 @@ class AuthService {
 		}
 	}
 
-	login() {
+	login(returnUrl?: string) {
 		// Standard OIDC redirect
-		window.location.href = (this.loginUrl || '/api/auth/login') + '?returnUrl=/mixingroom/';
+		const url = (this.loginUrl || '/api/auth/login') + (returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : '');
+		console.log(`Redirecting to login: ${url}`);
+		window.location.href = url;
 	}
 
 	logout() {

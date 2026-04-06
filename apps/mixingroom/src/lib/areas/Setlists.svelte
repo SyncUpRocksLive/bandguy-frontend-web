@@ -133,7 +133,6 @@
 </script>
 
 <div class="setlist-library">
-	<h3>Setlists</h3>
 
 	<section class="setlist-header">
 		<div class="upload-section">

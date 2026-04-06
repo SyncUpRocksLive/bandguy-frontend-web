@@ -1,8 +1,12 @@
+<script lang="ts">
+	import { router } from "@/Router.svelte";
+</script>
+
 <header id="header">
 	<!-- TODO: Change this to navigation for mixing room - to update sstate -->
 	<nav>
 		<a href="/">Home</a>
-		<a href="/mixingroom">Mixing Room</a>
+		<a {...router.linkTo("Home")} href="/mixingroom">Mixing Room</a>
 		<a href="/jam">Jam</a>
 	</nav>
 
