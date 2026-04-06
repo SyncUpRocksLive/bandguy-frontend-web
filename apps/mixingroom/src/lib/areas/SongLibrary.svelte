@@ -89,8 +89,7 @@
 		return mockTags[setId] || [];
 	}
 
-	function handleTableSelect(event: CustomEvent<{ item: SongOverview }>) {
-		selectedSong = event.detail.item;
+	function handleTableSelect(item: SongOverview) {
 		console.log('Selected song:', selectedSong);
 	}
 
@@ -107,13 +106,15 @@
 		// The table component will handle putting it in edit mode
 	}
 
-	function handleTableDelete(event: CustomEvent<{ item: SongOverview }>) {
-		const songToDelete = event.detail.item;
-		deleteMe(songToDelete.id);
+	function handleTableDelete(item: SongOverview) {
+		const songToDelete = item;
+		console.log('Deleting song:', songToDelete.id);
+		// TODO: Implement actual delete API call
+		songs = [...songs.filter(s => s.id !== songToDelete.id)];
+		selectedSong = null;
 	}
 
-	function handleTableSave(event: CustomEvent<{ item: SongOverview; changes: Record<string, any> }>) {
-		const { item, changes } = event.detail;
+	function handleTableSave(item: SongOverview, changes: Record<string, any>) {
 		const songIndex = songs.findIndex(s => s.id === item.id);
 		if (songIndex !== -1) {
 			songs[songIndex] = { ...songs[songIndex], ...changes };
@@ -121,34 +122,27 @@
 		}
 	}
 
-	function handleTableCancel(event: CustomEvent<{ item: SongOverview }>) {
-		const { item } = event.detail;
+	function handleTableCancel(item: SongOverview) {
 		// If it was a new song that hasn't been saved, remove it
 		if (item.id < 0) {
 			songs = songs.filter(s => s.id !== item.id);
 		}
 	}
 
-	function deleteMe(songId: number) {
-		console.log('Deleting song:', songId);
-		// TODO: Implement actual delete API call
-		songs = songs.filter(s => s.id !== songId);
-		selectedSong = null;
-	}
 </script>
 
 <div class="setlist-library">
 	<BasicTableEdit
-		items={songs}
+		bind:items={songs}
 		config={tableConfig}
-		{loading}
-		{error}
-		selectedItem={selectedSong}
-		on:select={handleTableSelect}
-		on:create={handleTableCreate}
-		on:delete={handleTableDelete}
-		on:save={handleTableSave}
-		on:cancel={handleTableCancel}
+		bind:loading={loading}
+		bind:error={error}
+		bind:selectedItem={selectedSong}
+		onselect={handleTableSelect}
+		oncreate={handleTableCreate}
+		ondelete={handleTableDelete}
+		onsave={handleTableSave}
+		oncancel={handleTableCancel}
 	/>
 </div>
 

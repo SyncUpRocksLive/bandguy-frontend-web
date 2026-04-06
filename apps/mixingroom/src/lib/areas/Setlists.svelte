@@ -89,8 +89,7 @@
 		return mockTags[setId] || [];
 	}
 
-	function handleTableSelect(event: CustomEvent<{ item: SetOverview }>) {
-		selectedSet = event.detail.item;
+	function handleTableSelect(item: SetOverview) {
 		console.log('Selected set:', selectedSet);
 	}
 
@@ -108,13 +107,15 @@
 		// The table component will handle putting it in edit mode
 	}
 
-	function handleTableDelete(event: CustomEvent<{ item: SetOverview }>) {
-		const setToDelete = event.detail.item;
-		deleteMe(setToDelete.id);
+	function handleTableDelete(item: SetOverview) {
+		const setToDelete = item;
+		console.log('Deleting setlist:', setToDelete.id);
+		// TODO: Implement actual delete API call
+		sets = [...sets.filter(s => s.id !== setToDelete.id)];
+		//selectedSet = null;
 	}
 
-	function handleTableSave(event: CustomEvent<{ item: SetOverview; changes: Record<string, any> }>) {
-		const { item, changes } = event.detail;
+	function handleTableSave(item: SetOverview, changes: Record<string, any>) {
 		const setIndex = sets.findIndex(s => s.id === item.id);
 		if (setIndex !== -1) {
 			sets[setIndex] = { ...sets[setIndex], ...changes };
@@ -122,20 +123,13 @@
 		}
 	}
 
-	function handleTableCancel(event: CustomEvent<{ item: SetOverview }>) {
-		const { item } = event.detail;
+	function handleTableCancel(item: SetOverview) {
 		// If it was a new setlist that hasn't been saved, remove it
 		if (item.id < 0) {
 			sets = sets.filter(s => s.id !== item.id);
 		}
 	}
 
-	function deleteMe(setId: number) {
-		console.log('Deleting setlist:', setId);
-		// TODO: Implement actual delete API call
-		sets = sets.filter(s => s.id !== setId);
-		selectedSet = null;
-	}
 </script>
 
 <div class="setlist-library">
@@ -148,16 +142,16 @@
 	</section>
 
 	<BasicTableEdit
-		items={sets}
+		bind:items={sets}
 		config={tableConfig}
-		{loading}
-		{error}
-		selectedItem={selectedSet}
-		on:select={handleTableSelect}
-		on:create={handleTableCreate}
-		on:delete={handleTableDelete}
-		on:save={handleTableSave}
-		on:cancel={handleTableCancel}
+		bind:loading={loading}
+		bind:error={error}
+		bind:selectedItem={selectedSet}
+		onselect={handleTableSelect}
+		oncreate={handleTableCreate}
+		ondelete={handleTableDelete}
+		onsave={handleTableSave}
+		oncancel={handleTableCancel}
 	/>
 </div>
 

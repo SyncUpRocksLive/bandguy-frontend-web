@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 
 	// Generic types
 	export interface ColumnDefinition<T> {
@@ -29,14 +28,24 @@
 		loading?: boolean;
 		error?: string | null;
 		selectedItem?: T | null;
+		onselect?: (item: T) => void;
+		oncreate?: () => void;
+		ondelete?: (item: T) => void;
+		onsave?: (item: T, changes: Record<string, any>) => void;
+		oncancel?: (item: T) => void;
 	}
 
 	let {
-		items,
+		items = $bindable(),
 		config,
-		loading = false,
-		error = null,
-		selectedItem = null
+		loading = $bindable(),
+		error = $bindable(),
+		selectedItem = $bindable(),
+		onselect,
+		oncreate,
+		ondelete,
+		onsave,
+		oncancel
 	}: Props<any> = $props();
 
 	// Internal state
@@ -45,15 +54,6 @@
 	let editingValues: Record<string, any> = $state({});
 	let showDeleteConfirm = $state(false);
 	let itemToDelete: any = $state(null);
-
-	// Event dispatcher
-	const dispatch = createEventDispatcher<{
-		select: { item: any };
-		create: void;
-		delete: { item: any };
-		save: { item: any; changes: Record<string, any> };
-		cancel: { item: any };
-	}>();
 
 	// Filter items based on search query
 	let filteredItems = $derived(items.filter(item => {
@@ -70,20 +70,22 @@
 	let gridTemplateColumns = $derived(config.columns.map(col => col.width || '1fr').join(' ') + ' 0.5fr');
 
 	function selectItem(item: any) {
-		dispatch('select', { item });
+		selectedItem = item;
+		onselect?.(item);
 		editingItemId = null;
 		editingValues = {};
 	}
 
 	function handleCreate() {
-		dispatch('create');
+		oncreate && oncreate();
 	}
 
 	function handleDeleteClick(item: any) {
+		console.log('Delete clicked for item:', item);
 		itemToDelete = item;
 
 		if (itemToDelete.id < 0) {
-			dispatch('delete', { item: itemToDelete });
+			ondelete?.(itemToDelete);
 			itemToDelete = null;
 			return;
 		}
@@ -92,8 +94,9 @@
 	}
 
 	function confirmDelete() {
+		console.log('Delete confirmed for item:', itemToDelete);
 		if (itemToDelete) {
-			dispatch('delete', { item: itemToDelete });
+			ondelete?.(itemToDelete);
 			showDeleteConfirm = false;
 			itemToDelete = null;
 		}
@@ -117,15 +120,16 @@
 	function cancelEdit() {
 		editingItemId = null;
 		editingValues = {};
-		dispatch('cancel', { item: items.find(item => config.getItemId(item) === editingItemId) });
+		oncancel && oncancel({ item: items.find(item => config.getItemId(item) === editingItemId) });
 	}
 
 	function saveEdit() {
 		if (editingItemId === null) return;
 		const item = items.find(item => config.getItemId(item) === editingItemId);
 		if (item) {
-			dispatch('save', { item, changes: editingValues });
+			onsave && onsave(item, { changes: editingValues });
 		}
+
 		editingItemId = null;
 		editingValues = {};
 	}
