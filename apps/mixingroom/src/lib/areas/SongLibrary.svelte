@@ -5,6 +5,7 @@
 	import type { SongOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 
+	let tableRef: BasicTableEdit;
 	let songs: SongOverview[] = [];
 	let selectedSong: SongOverview | null = null;
 	let loading = false;
@@ -103,7 +104,8 @@
 		nextTempId--;
 		songs = [newSong, ...songs];
 		selectedSong = newSong;
-		// The table component will handle putting it in edit mode
+
+		tableRef.startEdit(newSong);
 	}
 
 	function handleTableDelete(item: SongOverview) {
@@ -124,6 +126,7 @@
 
 	function handleTableCancel(item: SongOverview) {
 		// If it was a new song that hasn't been saved, remove it
+		console.log('Canceling edit for song:', item);
 		if (item.id < 0) {
 			songs = songs.filter(s => s.id !== item.id);
 		}
@@ -133,6 +136,7 @@
 
 <div class="setlist-library">
 	<BasicTableEdit
+		bind:this={tableRef}
 		bind:items={songs}
 		config={tableConfig}
 		bind:loading={loading}

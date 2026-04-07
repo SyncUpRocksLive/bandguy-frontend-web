@@ -80,7 +80,7 @@
 	}
 
 	function handleCreate() {
-		oncreate && oncreate();
+		oncreate?.();
 	}
 
 	function handleDeleteClick(item: any) {
@@ -110,7 +110,7 @@
 		itemToDelete = null;
 	}
 
-	function startEdit(item: any) {
+	export function startEdit(item: any) {
 		editingItemId = config.getItemId(item);
 		editingValues = {};
 		config.columns.forEach(col => {
@@ -121,16 +121,17 @@
 	}
 
 	function cancelEdit() {
+		const wasEditingItemId = editingItemId;
 		editingItemId = null;
 		editingValues = {};
-		oncancel && oncancel({ item: items.find(item => config.getItemId(item) === editingItemId) });
+		oncancel?.(items.find(item => config.getItemId(item) === wasEditingItemId));
 	}
 
 	function saveEdit() {
 		if (editingItemId === null) return;
 		const item = items.find(item => config.getItemId(item) === editingItemId);
 		if (item) {
-			onsave && onsave(item, { changes: editingValues });
+			onsave?.(item, { changes: editingValues });
 		}
 
 		editingItemId = null;
@@ -148,6 +149,7 @@
 			cancelEdit();
 		}
 	}
+
 </script>
 
 <div class="table-container">

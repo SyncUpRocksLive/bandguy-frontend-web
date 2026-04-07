@@ -104,7 +104,6 @@
 		nextTempId--;
 		sets = [newSet, ...sets];
 		selectedSet = newSet;
-		// The table component will handle putting it in edit mode
 	}
 
 	function handleTableDelete(item: SetOverview) {
