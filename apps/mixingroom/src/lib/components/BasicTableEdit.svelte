@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { stopPropagation } from "svelte/legacy";
+	import { tick } from 'svelte';
 
-	// TODO: Use keyboard events for save/cancel in edit mode, and maybe for delete confirmation as well. Also, navigating the list with arrow keys would be a nice enhancement for power users.
+	// TODO: 
+	// - Use keyboard events for save/cancel in edit mode, and maybe for delete confirmation as well. Also, navigating the list with arrow keys would be a nice enhancement for power users.
+	// - lock down create/delete while editing selected item. prevent clicking other items while editing. Force to save/cancel.
 
 	// Generic types
 	export interface ColumnDefinition<T> {
@@ -36,6 +38,8 @@
 		ondelete?: (item: T) => void;
 		onsave?: (item: T, changes: Record<string, any>) => void;
 		oncancel?: (item: T) => void;
+		onclone?: (item: T) => void;
+		onopen?: (item: T) => void;
 	}
 
 	let {
@@ -48,7 +52,9 @@
 		oncreate,
 		ondelete,
 		onsave,
-		oncancel
+		oncancel,
+		onclone,
+		onopen
 	}: Props<any> = $props();
 
 	// Internal state
@@ -70,7 +76,7 @@
 	}));
 
 	// Grid template columns
-	let gridTemplateColumns = $derived(config.columns.map(col => col.width || '1fr').join(' ') + ' 0.5fr');
+	let gridTemplateColumns = $derived(config.columns.map(col => col.width || '1fr').join(' ') + ' .7fr');
 
 	function selectItem(item: any) {
 		selectedItem = item;
@@ -110,7 +116,11 @@
 		itemToDelete = null;
 	}
 
-	export function startEdit(item: any) {
+	export async function startEdit(item: any) {
+		if (selectedItem !== item) {
+			selectItem(item);
+		}
+
 		editingItemId = config.getItemId(item);
 		editingValues = {};
 		config.columns.forEach(col => {
@@ -118,6 +128,14 @@
 				editingValues[col.key] = (item as any)[col.key];
 			}
 		});
+
+		// wait for DOM to update
+		await tick();
+
+		const input = document.querySelector<HTMLInputElement>('.table-content .table-row.selected .data-cell input.edit-input');
+		console.log('Focusing input for item:', item, input);
+		input?.focus();
+		input?.select();
 	}
 
 	function cancelEdit() {
@@ -199,7 +217,7 @@
 					{@const isEditing = editingItemId === itemId}
 					{@const isSelected = selectedItem && config.getItemId(selectedItem) === itemId}
 
-					<div class="table-row" class:selected={isSelected} onclick={() => !isEditing && selectItem(item)}>
+					<div class="table-row" class:selected={isSelected} onclick={() => !isEditing && selectItem(item)} >
 						{#each config.columns as col, idx}
 							<div class="data-cell" class:first-cell={idx === 0}>
 								{#if isEditing && col.editable}
@@ -213,7 +231,6 @@
 											onkeydown={handleKeyDown}
 											onclick={(e) => e.stopPropagation()}
 											class="edit-input"
-											autofocus
 										/>
 									{/if}
 								{:else}
@@ -232,10 +249,19 @@
 								<button
 									class="btn-small btn-edit"
 									onclick={(e) => { e.stopPropagation(); startEdit(item); }}
-									title="Edit"
-								>
-									✎
-								</button>
+									title="Edit">✎</button>
+								{#if onclone}
+									<button
+										class="btn-small btn-edit"
+										onclick={(e) => { e.stopPropagation(); onclone(item); }}
+										title="Clone">📄</button>
+								{/if}
+								{#if onopen}
+									<button
+										class="btn-small btn-edit"
+										onclick={(e) => { e.stopPropagation(); onopen(item); }}
+										title="Open">📂</button>
+								{/if}
 							{/if}
 						</div>
 					</div>

@@ -32,6 +32,12 @@
 				searchable: true
 			},
 			{
+				key: 'tracks',
+				header: 'Tracks',
+				width: '0.55fr',
+				display: (song) => (song.tracks ?? 0).toString()
+			},
+			{
 				key: 'duration',
 				header: 'Duration',
 				width: '0.75fr',
@@ -41,7 +47,7 @@
 				key: 'tags',
 				header: 'Tags',
 				width: '1.5fr',
-				display: (song) => getTags(song.id).join(', ') || 'No tags',
+				display: (song) => getTags(song.id).join(', ') || '',
 				render: (song, isEditing, value, onChange) => {
 					const tags = getTags(song.id);
 					return `<div class="tags">${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
@@ -132,6 +138,26 @@
 		}
 	}
 
+	function handleTableClone(item: SongOverview) {
+		const newSong: SongOverview = {
+			...item,
+			id: nextTempId,
+			name: `${item.name} (Copy)`,
+			createdAtMsUtc: Date.now()
+		};
+		nextTempId--;
+		songs = [newSong, ...songs].sort((a, b) => a.name.localeCompare(b.name));
+		selectedSong = newSong;
+
+		// TODO: Will need API to clone tracks
+
+		tableRef.startEdit(newSong);
+	}
+
+	function handleTableOpen(item: SongOverview) {
+		console.log('Opening song:', item);
+	}
+
 </script>
 
 <div class="setlist-library">
@@ -147,6 +173,8 @@
 		ondelete={handleTableDelete}
 		onsave={handleTableSave}
 		oncancel={handleTableCancel}
+		onclone={handleTableClone}
+		onopen={handleTableOpen}
 	/>
 </div>
 

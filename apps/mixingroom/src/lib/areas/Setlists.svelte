@@ -5,6 +5,7 @@
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 	import Upload from "./components/setlist/Upload.svelte";
 
+	let tableRef: BasicTableEdit;
 	let sets: SetOverview[] = [];
 	let selectedSet: SetOverview | null = null;
 	let loading = false;
@@ -40,7 +41,7 @@
 				key: 'tags',
 				header: 'Tags',
 				width: '1.5fr',
-				display: (set) => getTags(set.id).join(', ') || 'No tags',
+				display: (set) => getTags(set.id).join(', ') || '',
 				render: (set, isEditing, value, onChange) => {
 					const tags = getTags(set.id);
 					return `<div class="tags">${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>`;
@@ -129,6 +130,25 @@
 		}
 	}
 
+	function handleTableClone(item: SetOverview) {
+		const newSet: SetOverview = {
+			musicianId: 0,
+			id: nextTempId,
+			name: item.name + ' Copy',
+			createdAtMsUtc: Date.now(),
+			songs: [...item.songs]
+		};
+		nextTempId--;
+		sets = [newSet, ...sets].sort((a, b) => a.name.localeCompare(b.name));
+		selectedSet = newSet;
+
+		tableRef.startEdit(newSet);
+	}
+
+	function handleTableOpen(item: SetOverview) {
+		console.log('Opening setlist:', item);
+	}
+
 </script>
 
 <div class="setlist-library">
@@ -140,6 +160,7 @@
 	</section>
 
 	<BasicTableEdit
+		bind:this={tableRef}
 		bind:items={sets}
 		config={tableConfig}
 		bind:loading={loading}
@@ -150,6 +171,8 @@
 		ondelete={handleTableDelete}
 		onsave={handleTableSave}
 		oncancel={handleTableCancel}
+		onclone={handleTableClone}
+		onopen={handleTableOpen}
 	/>
 </div>
 
