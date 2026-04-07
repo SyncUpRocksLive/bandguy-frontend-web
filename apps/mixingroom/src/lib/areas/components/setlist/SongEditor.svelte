@@ -19,6 +19,7 @@
 	let setComplete: SetComplete | null = $state(null);
 	let draggedSongId: number | null = $state(null);
 	let dragOverSongId: number | null = $state(null);
+	let dragPosition: 'above' | 'below' | null = $state(null);
 
 	let availableSongs = $derived(
 		songs.filter(song => !setSongs.some(setSong => setSong.id === song.id))
@@ -105,44 +106,76 @@
 	function dragEnd() {
 		draggedSongId = null;
 		dragOverSongId = null;
+		dragPosition = null;
 	}
 
 	function dragOver(event: DragEvent, songId: number) {
 		event.preventDefault();
+
+		if (draggedSongId === null || draggedSongId === songId) {
+			dragOverSongId = null;
+			dragPosition = null;
+			return;
+		}
+
 		dragOverSongId = songId;
+
+		// Find the song row element (traverse up from event target if needed)
+		let targetElement = event.target as HTMLElement;
+		while (targetElement && !targetElement.classList.contains('song-row')) {
+			targetElement = targetElement.parentElement as HTMLElement;
+		}
+
+		if (!targetElement) return;
+
+		// Determine if we're above or below the middle of the song row
+		const rect = targetElement.getBoundingClientRect();
+		const y = event.clientY - rect.top;
+		const height = rect.height;
+		const deadZone = 8; // pixels of dead zone in center to prevent flickering
+
+		if (y < height / 2 - deadZone) {
+			dragPosition = 'above';
+		} else if (y > height / 2 + deadZone) {
+			dragPosition = 'below';
+		}
+		// If in dead zone, keep current position
 	}
 
 	function dropOnSong(event: DragEvent, songId: number) {
 		event.preventDefault();
-		if (draggedSongId === null || draggedSongId === songId) {
-			dragOverSongId = null;
+		if (draggedSongId === null || draggedSongId === songId || dragPosition === null) {
+			dragEnd();
 			return;
 		}
 
-		console.log(`Dropping song ${draggedSongId} on song ${songId}`);
-		reorderSong(draggedSongId, songId);
+		reorderSong(draggedSongId, songId, dragPosition);
 		dragEnd();
 	}
 
-	function reorderSong(dragSongId: number, targetSongId: number) {
+	function reorderSong(dragSongId: number, targetSongId: number, position: 'above' | 'below') {
 		const currentIndex = setSongs.findIndex((song) => song.id === dragSongId);
 		const targetIndex = setSongs.findIndex((song) => song.id === targetSongId);
 		if (currentIndex < 0 || targetIndex < 0 || currentIndex === targetIndex) return;
 
-		console.log(`Reordering song ${dragSongId} from index ${currentIndex} to index ${targetIndex}`);
+		const nextSongs = [...setSongs];
+		const [moved] = nextSongs.splice(currentIndex, 1);
 
-		// Inherit to target's sort order and shift everything after down
-		console.log('Before reorder:', setSongs.map(s => `${s.name}(order ${s.setOrder})`).join(', '));
-		let targetSetOrder = setSongs[targetIndex].setOrder;
-		setSongs[currentIndex].setOrder = targetSetOrder;
-		++targetSetOrder;
-
-		for(let i = targetIndex; i < setSongs.length; i++) {
-			setSongs[i].setOrder = targetSetOrder++;
+		// Insert at the correct position
+		let insertIndex = targetIndex;
+		if (position === 'below') {
+			insertIndex = targetIndex + 1;
 		}
 
-		setSongs = [...setSongs.sort((a, b) => a.setOrder - b.setOrder)];
-		console.log('After reorder:', setSongs.map(s => `${s.name}(order ${s.setOrder})`).join(', '));
+		// Adjust insert index if we removed an item before this position
+		if (currentIndex < insertIndex) {
+			insertIndex--;
+		}
+
+		nextSongs.splice(insertIndex, 0, moved);
+
+		// Update setOrder for all songs
+		setSongs = nextSongs.map((song, index) => ({ ...song, setOrder: index + 1 }));
 	}
 </script>
 
@@ -195,7 +228,7 @@
 					<ul class="song-list" on:dragover|preventDefault>
 						{#each setSongs as song, index (song.id)}
 							<li
-								class="song-row right-row {dragOverSongId === song.id ? 'drag-over' : ''}"
+								class="song-row right-row {dragOverSongId === song.id ? `drag-over drag-${dragPosition}` : ''}"
 								draggable="true"
 								on:dragstart={(event) => dragStart(event, song.id)}
 								on:dragend={dragEnd}
@@ -305,6 +338,7 @@
 		border: 1px solid #e4e4e4;
 		border-radius: 10px;
 		transition: background 0.2s, border-color 0.2s;
+		position: relative;
 	}
 
 	.song-row:hover {
@@ -314,6 +348,28 @@
 	.song-row.drag-over {
 		border-color: #3b82f6;
 		background: rgba(59, 130, 246, 0.08);
+	}
+
+	.song-row.drag-over.drag-above::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: #3b82f6;
+		border-radius: 1px;
+	}
+
+	.song-row.drag-over.drag-below::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: #3b82f6;
+		border-radius: 1px;
 	}
 
 	.available-panel .song-row {
