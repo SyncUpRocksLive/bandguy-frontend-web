@@ -4,7 +4,6 @@
 	import { getSetComplete, getSongsOverview } from "@shared/services/syncuprocks/musician/Api";
 	import type { SetComplete, SongOverview } from "@shared/services/syncuprocks/musician/Types";
 
-	// Component props
 	interface Props<T> {
 		setId: number;
 	}
@@ -13,12 +12,18 @@
 		setId = $bindable(),
 	}: Props<any> = $props();
 
-	let songs: SongOverview[] = [];
-	let loading = false;
-	let error: string | null = null;
-	let setComplete: SetComplete | null = null;
+	let songs: SongOverview[] = $state([]);
+	let setSongs: SongOverview[] = $state([]);
+	let loading = $state(false);
+	let error: string | null = $state(null);
+	let setComplete: SetComplete | null = $state(null);
+	let draggedSongId: number | null = $state(null);
+	let dragOverSongId: number | null = $state(null);
 
-	// Reactive statement to fetch set details when the selected set changes
+	let availableSongs = $derived(
+		songs.filter(song => !setSongs.some(setSong => setSong.id === song.id))
+	);
+
 	$effect(() => {
 		if (setId > 0) {
 			loadSet();
@@ -29,13 +34,17 @@
 
 	async function loadSet() {
 		if (!auth.user?.userId) return;
-		
+
 		loading = true;
 		error = null;
 		try {
 			const result = await getSetComplete(setId);
 			if (result.ok) {
-				setComplete = result.value;
+				setComplete = result.value!;
+				console.log('Fetched set details:', setComplete);
+				setSongs = setComplete.songs
+					.map((song) => ({ id: song.id, name: song.name, setOrder: song.setOrder }))
+					.sort((a, b) => a.setOrder - b.setOrder);
 			} else {
 				error = result.error.message;
 			}
@@ -48,13 +57,14 @@
 
 	async function fetchSongs() {
 		if (!auth.user?.userId) return;
-		
+
 		loading = true;
 		error = null;
 		try {
 			const result = await getSongsOverview(auth.user.userId);
 			if (result.ok) {
 				songs = result.value.sort((a, b) => a.name.localeCompare(b.name));
+				console.log('Fetched songs:', songs);
 			} else {
 				error = result.error.message;
 			}
@@ -64,6 +74,339 @@
 			loading = false;
 		}
 	}
+
+	function addSong(song: SongOverview) {
+		if (setSongs.some((setSong) => setSong.id === song.id)) 
+			return;
+
+		// Add to front of set and adjust everything down
+		song.setOrder = 0;
+		let newSetOrder = 1;
+		for (const setSong of setSongs) {
+			setSong.setOrder = newSetOrder++;
+		}
+
+		setSongs = [song, ...setSongs];
+	}
+
+	function removeSong(song: SongOverview) {
+		setSongs = setSongs
+			.filter((setSong) => setSong.id !== song.id)
+			.map((setSong, index) => ({ ...setSong, setOrder: index + 1 }));
+	}
+
+	function dragStart(event: DragEvent, songId: number) {
+		draggedSongId = songId;
+		event.dataTransfer?.setData('text/plain', String(songId));
+		event.dataTransfer?.setData('application/x-song', String(songId));
+		event.dataTransfer!.effectAllowed = 'move';
+	}
+
+	function dragEnd() {
+		draggedSongId = null;
+		dragOverSongId = null;
+	}
+
+	function dragOver(event: DragEvent, songId: number) {
+		event.preventDefault();
+		dragOverSongId = songId;
+	}
+
+	function dropOnSong(event: DragEvent, songId: number) {
+		event.preventDefault();
+		if (draggedSongId === null || draggedSongId === songId) {
+			dragOverSongId = null;
+			return;
+		}
+
+		console.log(`Dropping song ${draggedSongId} on song ${songId}`);
+		reorderSong(draggedSongId, songId);
+		dragEnd();
+	}
+
+	function dropToEnd(event: DragEvent) {
+		event.preventDefault();
+		if (draggedSongId === null) 
+			return;
+
+		const currentIndex = setSongs.findIndex((song) => song.id === draggedSongId);
+		if (currentIndex < 0) 
+			return;
+
+		console.log(`Dropping song ${draggedSongId} to end of list`);
+
+		const nextSongs = [...setSongs];
+		const [moved] = nextSongs.splice(currentIndex, 1);
+		nextSongs.push(moved);
+		setSongs = nextSongs.map((song, index) => ({ ...song, setOrder: index + 1 }));
+		dragEnd();
+	}
+
+	function reorderSong(dragSongId: number, targetSongId: number) {
+		const currentIndex = setSongs.findIndex((song) => song.id === dragSongId);
+		const targetIndex = setSongs.findIndex((song) => song.id === targetSongId);
+		if (currentIndex < 0 || targetIndex < 0 || currentIndex === targetIndex) return;
+
+		console.log(`Reordering song ${dragSongId} from index ${currentIndex} to index ${targetIndex}`);
+
+		const prevSetOrder = setSongs[currentIndex].setOrder;
+		setSongs[currentIndex].setOrder = setSongs[targetIndex].setOrder;
+		setSongs[targetIndex].setOrder = prevSetOrder;
+
+		setSongs = [...setSongs].sort((a, b) => a.setOrder - b.setOrder);
+	}
 </script>
 
-<h2>Set {setId}</h2>
+<section class="song-editor-form">
+	<div class="form-heading">
+		<div>
+			<h2>Set {setId} Editor</h2>
+			{#if setComplete}
+				<p class="set-meta">{setComplete.Name}</p>
+			{/if}
+		</div>
+		<p class="hint">Drag songs on the right to reorder the set. Add available songs from the left.</p>
+	</div>
+
+	{#if loading}
+		<div class="status-box">Loading songs...</div>
+	{:else if error}
+		<div class="status-box error">{error}</div>
+	{:else}
+		<div class="song-panels">
+			<div class="song-panel available-panel">
+				<div class="panel-header">
+					<h3>Available Songs</h3>
+				</div>
+				{#if availableSongs.length > 0}
+					<ul class="song-list">
+						{#each availableSongs as song}
+							<li class="song-row">
+								<div class="song-details">
+									<span class="song-title">{song.name}</span>
+									<span class="song-meta">{song.setOrder ? `Order ${song.setOrder}` : 'Not in set'}{song.durationMs ? ` • ${msToHMS(song.durationMs)}` : ''}</span>
+								</div>
+								<button type="button" class="btn btn-small btn-add" on:click={() => addSong(song)}>
+									Add
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					<div class="empty-state">All songs are currently in the set.</div>
+				{/if}
+			</div>
+
+			<div class="song-panel set-panel">
+				<div class="panel-header">
+					<h3>Set Songs</h3>
+					<span class="panel-count">{setSongs.length} song{setSongs.length === 1 ? '' : 's'}</span>
+				</div>
+				{#if setSongs.length > 0}
+					<ul class="song-list" on:dragover|preventDefault on:drop|preventDefault={dropToEnd}>
+						{#each setSongs as song, index (song.id)}
+							<li
+								class="song-row right-row {dragOverSongId === song.id ? 'drag-over' : ''}"
+								draggable="true"
+								on:dragstart={(event) => dragStart(event, song.id)}
+								on:dragend={dragEnd}
+								on:dragover|preventDefault={(event) => dragOver(event, song.id)}
+								on:drop={(event) => dropOnSong(event, song.id)}
+							>
+								<div class="song-drag-handle">☰</div>
+								<div class="song-details">
+									<span class="song-title">{song.name}</span>
+									<span class="song-meta">Order {index + 1}{song.durationMs ? ` • ${msToHMS(song.durationMs)}` : ''}</span>
+								</div>
+								<button type="button" class="btn btn-small btn-remove" on:click={() => removeSong(song)}>
+									Remove
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					<div class="empty-state">No songs are currently assigned to this set.</div>
+				{/if}
+			</div>
+		</div>
+	{/if}
+</section>
+
+<style>
+	.song-editor-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.form-heading {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.form-heading h2 {
+		margin: 0;
+		font-size: 1.4rem;
+	}
+
+	.set-meta {
+		margin: 0.25rem 0 0;
+		color: #555;
+	}
+
+	.hint {
+		font-size: 0.95rem;
+		color: #666;
+	}
+
+	.song-panels {
+		display: grid;
+		grid-template-columns: 1fr 1.2fr;
+		gap: 1rem;
+		min-height: 360px;
+	}
+
+	.song-panel {
+		background: #fff;
+		border: 1px solid #d8d8d8;
+		border-radius: 12px;
+		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.panel-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem;
+		border-bottom: 1px solid #eee;
+		padding-bottom: 0.75rem;
+	}
+
+	.panel-header h3 {
+		margin: 0;
+		font-size: 1.05rem;
+	}
+
+	.panel-count {
+		font-size: 0.9rem;
+		color: #555;
+	}
+
+	.song-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		min-height: 180px;
+	}
+
+	.song-row {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.9rem 1rem;
+		background: #fafafa;
+		border: 1px solid #e4e4e4;
+		border-radius: 10px;
+		transition: background 0.2s, border-color 0.2s;
+	}
+
+	.song-row:hover {
+		background: #f3f7ff;
+	}
+
+	.song-row.drag-over {
+		border-color: #3b82f6;
+		background: rgba(59, 130, 246, 0.08);
+	}
+
+	.available-panel .song-row {
+		cursor: default;
+	}
+
+	.right-row {
+		cursor: grab;
+	}
+
+	.song-drag-handle {
+		width: 32px;
+		height: 32px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1rem;
+		color: #4d4d4d;
+		border: 1px solid #d8d8d8;
+		border-radius: 50%;
+		background: #fff;
+	}
+
+	.song-details {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	.song-title {
+		font-weight: 600;
+		color: #1f2937;
+	}
+
+	.song-meta {
+		font-size: 0.85rem;
+		color: #71717a;
+	}
+
+	.empty-state,
+	.status-box {
+		padding: 1rem;
+		border-radius: 10px;
+		background: #f6f6f6;
+		color: #555;
+	}
+
+	.status-box.error {
+		background: #fee2e2;
+		color: #991b1b;
+	}
+
+	.btn-small {
+		padding: 0.45rem 0.8rem;
+		font-size: 0.85rem;
+		border: 1px solid #c7d2fe;
+		border-radius: 8px;
+		background: #eff6ff;
+		color: #1d4ed8;
+		cursor: pointer;
+		transition: background 0.2s, transform 0.2s;
+	}
+
+	.btn-small:hover {
+		background: #dbeafe;
+	}
+
+	.btn-add {
+		border-color: #4f46e5;
+		background: #eef2ff;
+		color: #4338ca;
+	}
+
+	.btn-remove {
+		border-color: #fca5a5;
+		background: #fff1f2;
+		color: #b91c1c;
+	}
+
+	@media (max-width: 900px) {
+		.song-panels {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

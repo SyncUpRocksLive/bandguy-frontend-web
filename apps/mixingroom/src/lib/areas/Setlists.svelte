@@ -149,7 +149,7 @@
 
 	function handleTableOpen(item: SetOverview) {
 		console.log('Opening setlist:', item);
-		router.replace('Setlists', [`${item.id}`]);
+		router.navigate('Setlists', [`${item.id}`]);
 	}
 
 </script>
