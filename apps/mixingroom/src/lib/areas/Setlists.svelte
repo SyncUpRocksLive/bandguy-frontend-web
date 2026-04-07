@@ -158,8 +158,9 @@
 
 	{#if router.route.params && router.route.params.length > 0}
 		<button onclick={() => router.replace('Setlists')}>Back to Setlists</button>
-		<h1>Edit Setlist {router.route.params[0]}</h1>
-		<SongEditor />
+		<SongEditor 
+			setId={parseInt(router.route.params[0])}
+		/>
 	{:else}
 		<section class="setlist-header">
 			<div class="upload-section">
