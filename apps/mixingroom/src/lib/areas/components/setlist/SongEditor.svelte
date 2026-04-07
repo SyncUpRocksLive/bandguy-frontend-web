@@ -124,24 +124,6 @@
 		dragEnd();
 	}
 
-	function dropToEnd(event: DragEvent) {
-		event.preventDefault();
-		if (draggedSongId === null) 
-			return;
-
-		const currentIndex = setSongs.findIndex((song) => song.id === draggedSongId);
-		if (currentIndex < 0) 
-			return;
-
-		console.log(`Dropping song ${draggedSongId} to end of list`);
-
-		const nextSongs = [...setSongs];
-		const [moved] = nextSongs.splice(currentIndex, 1);
-		nextSongs.push(moved);
-		setSongs = nextSongs.map((song, index) => ({ ...song, setOrder: index + 1 }));
-		dragEnd();
-	}
-
 	function reorderSong(dragSongId: number, targetSongId: number) {
 		const currentIndex = setSongs.findIndex((song) => song.id === dragSongId);
 		const targetIndex = setSongs.findIndex((song) => song.id === targetSongId);
@@ -149,11 +131,18 @@
 
 		console.log(`Reordering song ${dragSongId} from index ${currentIndex} to index ${targetIndex}`);
 
-		const prevSetOrder = setSongs[currentIndex].setOrder;
-		setSongs[currentIndex].setOrder = setSongs[targetIndex].setOrder;
-		setSongs[targetIndex].setOrder = prevSetOrder;
+		// Inherit to target's sort order and shift everything after down
+		console.log('Before reorder:', setSongs.map(s => `${s.name}(order ${s.setOrder})`).join(', '));
+		let targetSetOrder = setSongs[targetIndex].setOrder;
+		setSongs[currentIndex].setOrder = targetSetOrder;
+		++targetSetOrder;
 
-		setSongs = [...setSongs].sort((a, b) => a.setOrder - b.setOrder);
+		for(let i = targetIndex; i < setSongs.length; i++) {
+			setSongs[i].setOrder = targetSetOrder++;
+		}
+
+		setSongs = [...setSongs.sort((a, b) => a.setOrder - b.setOrder)];
+		console.log('After reorder:', setSongs.map(s => `${s.name}(order ${s.setOrder})`).join(', '));
 	}
 </script>
 
@@ -203,7 +192,7 @@
 					<span class="panel-count">{setSongs.length} song{setSongs.length === 1 ? '' : 's'}</span>
 				</div>
 				{#if setSongs.length > 0}
-					<ul class="song-list" on:dragover|preventDefault on:drop|preventDefault={dropToEnd}>
+					<ul class="song-list" on:dragover|preventDefault>
 						{#each setSongs as song, index (song.id)}
 							<li
 								class="song-row right-row {dragOverSongId === song.id ? 'drag-over' : ''}"
