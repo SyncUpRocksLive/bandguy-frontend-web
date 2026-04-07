@@ -4,6 +4,8 @@
 	import { getSongsOverview } from "@shared/services/syncuprocks/musician/Api";
 	import type { SongOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
+	import { router } from "@/Router.svelte";
+	import TrackEditor from "./components/song_library/TrackEditor.svelte";
 
 	let tableRef: BasicTableEdit;
 	let songs: SongOverview[] = [];
@@ -156,11 +158,18 @@
 
 	function handleTableOpen(item: SongOverview) {
 		console.log('Opening song:', item);
+		router.replace('SongLibrary', [`${item.id}`]);
 	}
 
 </script>
 
 <div class="setlist-library">
+
+	{#if router.route.params && router.route.params.length > 0}
+		<button onclick={() => router.replace('SongLibrary')}>Back to SongLibrary</button>
+		<h1>Edit Song {router.route.params[0]}</h1>
+		<TrackEditor />
+	{:else}
 	<BasicTableEdit
 		bind:this={tableRef}
 		bind:items={songs}
@@ -176,6 +185,7 @@
 		onclone={handleTableClone}
 		onopen={handleTableOpen}
 	/>
+	{/if}
 </div>
 
 <style>

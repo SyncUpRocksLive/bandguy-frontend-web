@@ -4,6 +4,8 @@
 	import type { SetOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 	import Upload from "./components/setlist/Upload.svelte";
+	import { router } from "@/Router.svelte";
+	import SongEditor from "./components/setlist/SongEditor.svelte";
 
 	let tableRef: BasicTableEdit;
 	let sets: SetOverview[] = [];
@@ -147,33 +149,40 @@
 
 	function handleTableOpen(item: SetOverview) {
 		console.log('Opening setlist:', item);
+		router.replace('Setlists', [`${item.id}`]);
 	}
 
 </script>
 
 <div class="setlist-library">
 
-	<section class="setlist-header">
-		<div class="upload-section">
-			<Upload />
-		</div>
-	</section>
+	{#if router.route.params && router.route.params.length > 0}
+		<button onclick={() => router.replace('Setlists')}>Back to Setlists</button>
+		<h1>Edit Setlist {router.route.params[0]}</h1>
+		<SongEditor />
+	{:else}
+		<section class="setlist-header">
+			<div class="upload-section">
+				<Upload />
+			</div>
+		</section>
 
-	<BasicTableEdit
-		bind:this={tableRef}
-		bind:items={sets}
-		config={tableConfig}
-		bind:loading={loading}
-		bind:error={error}
-		bind:selectedItem={selectedSet}
-		onselect={handleTableSelect}
-		oncreate={handleTableCreate}
-		ondelete={handleTableDelete}
-		onsave={handleTableSave}
-		oncancel={handleTableCancel}
-		onclone={handleTableClone}
-		onopen={handleTableOpen}
-	/>
+		<BasicTableEdit
+			bind:this={tableRef}
+			bind:items={sets}
+			config={tableConfig}
+			bind:loading={loading}
+			bind:error={error}
+			bind:selectedItem={selectedSet}
+			onselect={handleTableSelect}
+			oncreate={handleTableCreate}
+			ondelete={handleTableDelete}
+			onsave={handleTableSave}
+			oncancel={handleTableCancel}
+			onclone={handleTableClone}
+			onopen={handleTableOpen}
+		/>
+	{/if}
 </div>
 
 <style>
