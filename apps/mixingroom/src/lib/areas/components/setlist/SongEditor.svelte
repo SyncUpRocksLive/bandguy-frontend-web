@@ -241,7 +241,7 @@
 									<span class="song-meta">Order {index + 1}{song.durationMs ? ` • ${msToHMS(song.durationMs)}` : ''}</span>
 								</div>
 								<button type="button" class="btn btn-small btn-remove" on:click={() => removeSong(song)}>
-									Remove
+									🗑️
 								</button>
 							</li>
 						{/each}
@@ -284,7 +284,7 @@
 
 	.song-panels {
 		display: grid;
-		grid-template-columns: 1fr 1.2fr;
+		grid-template-columns: 0.3fr 1fr;
 		gap: 1rem;
 		min-height: 360px;
 	}
@@ -378,15 +378,17 @@
 
 	.right-row {
 		cursor: grab;
+		padding: 0.6rem 0.8rem;
+		grid-template-columns: auto 1fr auto;
 	}
 
 	.song-drag-handle {
-		width: 32px;
-		height: 32px;
+		width: 24px;
+		height: 24px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 1rem;
+		font-size: 0.8rem;
 		color: #4d4d4d;
 		border: 1px solid #d8d8d8;
 		border-radius: 50%;
@@ -423,14 +425,19 @@
 	}
 
 	.btn-small {
-		padding: 0.45rem 0.8rem;
-		font-size: 0.85rem;
+		padding: 0.3rem 0.5rem;
+		font-size: 0.8rem;
 		border: 1px solid #c7d2fe;
-		border-radius: 8px;
+		border-radius: 6px;
 		background: #eff6ff;
 		color: #1d4ed8;
 		cursor: pointer;
 		transition: background 0.2s, transform 0.2s;
+		min-width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.btn-small:hover {
