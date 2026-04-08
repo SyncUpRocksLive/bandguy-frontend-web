@@ -56,7 +56,7 @@ export interface Song {
 export interface SetComplete {
 	musicianId: number;
 	id: number;
-	Name: string;
+	name: string;
 	createdAtMsUtc: number;
 	songs: Song[];
 }

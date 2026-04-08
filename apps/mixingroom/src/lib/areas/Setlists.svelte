@@ -157,7 +157,6 @@
 <div class="setlist-library">
 
 	{#if router.route.params && router.route.params.length > 0}
-		<button onclick={() => router.replace('Setlists')}>Back to Setlists</button>
 		<SongEditor 
 			setId={parseInt(router.route.params[0])}
 		/>

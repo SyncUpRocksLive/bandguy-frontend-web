@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { auth } from "@/Auth.svelte";
+	import { router } from "@/Router.svelte";
 	import { msToHMS } from "@shared/display/DisplayHelpers";
 	import { getSetComplete, getSongsOverview } from "@shared/services/syncuprocks/musician/Api";
 	import type { SetComplete, SongOverview } from "@shared/services/syncuprocks/musician/Types";
@@ -187,10 +188,10 @@
 <section class="song-editor-form">
 	<div class="form-heading">
 		<div>
-			<h2>Set {setId} Editor</h2>
 			{#if setComplete}
-				<p class="set-meta">{setComplete.Name}</p>
+				<h2>Set {setComplete.name} Editor</h2>
 			{/if}
+			<button on:click={() => router.replace('Setlists')}>Cancel</button>
 		</div>
 		<p class="hint">Drag songs on the right to reorder the set. Add available songs from the left.</p>
 	</div>
@@ -232,8 +233,8 @@
 					{availableSongs.length === 0
 						? 'All songs are currently in the set.'
 						: 'No available songs match your filter.'}
-				</div>
-
+				</div>			{/if}
+		</div>
 			<div class="song-panel set-panel">
 				<div class="panel-header">
 					<h3>Set Songs</h3>
