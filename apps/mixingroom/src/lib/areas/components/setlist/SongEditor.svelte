@@ -2,7 +2,7 @@
 	import { auth } from "@/Auth.svelte";
 	import { router } from "@/Router.svelte";
 	import { msToHMS } from "@shared/display/DisplayHelpers";
-	import { getSetComplete, getSongsOverview } from "@shared/services/syncuprocks/musician/Api";
+	import { getSetComplete, getSongsOverview, saveSetsOverview } from "@shared/services/syncuprocks/musician/Api";
 	import type { SetComplete, SongOverview } from "@shared/services/syncuprocks/musician/Types";
 
 	interface Props<T> {
@@ -22,6 +22,7 @@
 	let dragOverSongId: number | null = $state(null);
 	let dragPosition: 'above' | 'below' | null = $state(null);
 	let availableFilter = $state('');
+	let hasChanges = $state(false);
 
 	let availableSongs = $derived(
 		songs.filter(song => !setSongs.some(setSong => setSong.id === song.id))
@@ -94,12 +95,16 @@
 		}
 
 		setSongs = [song, ...setSongs];
+
+		hasChanges = true;
 	}
 
 	function removeSong(song: SongOverview) {
 		setSongs = setSongs
 			.filter((setSong) => setSong.id !== song.id)
 			.map((setSong, index) => ({ ...setSong, setOrder: index + 1 }));
+
+		hasChanges = true;
 	}
 
 	function dragStart(event: DragEvent, songId: number) {
@@ -182,12 +187,35 @@
 
 		// Update setOrder for all songs
 		setSongs = nextSongs.map((song, index) => ({ ...song, setOrder: index + 1 }));
+
+		hasChanges = true;
 	}
 
 	async function saveSet() {
-		// TODO: Implement save functionality
+		if (!hasChanges) {
+			return;
+		}
+
 		console.log('Saving set with songs:', setSongs);
-		alert('Save functionality not yet implemented');
+
+		loading = true;
+		error = null;
+		try {
+			// TODO: DO NOT USE HIS METHOD. IT CACHES!!! And returns more than we need
+			const result = await saveSetsOverview(setId, setSongs);
+			if (result.ok) {
+				console.log('Set saved successfully, new setId:', result.value);
+				router.replace('Setlists');
+				// Optionally, you could also update the local state here if you want to stay on the page
+				hasChanges = false;
+			} else {
+				error = result.error.message;
+			}
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			loading = false;
+		}
 	}
 </script>
 
@@ -195,14 +223,14 @@
 	<div class="form-heading">
 		<div class="header-content">
 			{#if setComplete}
-				<h2>Set {setComplete.name} Editor</h2>
+				<h3>Set "{setComplete.name}"</h3>
+				<p class="hint">Drag songs on the right to reorder the set. Add available songs from the left.</p>
 			{/if}
 			<div class="header-buttons">
-				<button class="control-btn" on:click={saveSet}>Save</button>
+				<button class="control-btn" on:click={saveSet} disabled={!hasChanges}>Save</button>
 				<button class="control-btn cancel-btn" on:click={() => router.replace('Setlists')}>Cancel</button>
 			</div>
 		</div>
-		<p class="hint">Drag songs on the right to reorder the set. Add available songs from the left.</p>
 	</div>
 
 	{#if loading}
@@ -331,6 +359,11 @@
 		transition: all 0.2s ease;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
+	}
+
+	.control-btn:is(:disabled) {
+		background: #155b71;
+		cursor: not-allowed;
 	}
 
 	.control-btn:hover:not(:disabled) {

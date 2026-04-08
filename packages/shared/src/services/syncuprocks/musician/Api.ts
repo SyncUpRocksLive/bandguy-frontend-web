@@ -1,5 +1,5 @@
 import { ApiResponseBase } from "@shared/services/syncuprocks/Types";
-import { SetComplete, SetOverview, SongOverview } from "@shared/services/syncuprocks/musician/Types";
+import { SetComplete, SetOverview, Song, SongOverview } from "@shared/services/syncuprocks/musician/Types";
 import { LogError } from "@shared/services/Logger";
 
 export type Result<T, E = Error> = 
@@ -77,6 +77,26 @@ export const getSetsOverview = async (musicianId: string) : Promise<Result<SetOv
 		return { ok: false, error };
 
 	return { ok: true, value: data.data ?? [] };
+}
+
+export const saveSetsOverview = async (setId: number, setlistSongs: SongOverview[]) : Promise<Result<number>> => {
+	if (setlistSongs.length === 0) {
+		const errorMsg = `Cannot save empty setlist for setId=${setId}`;
+		LogError(errorMsg);
+		return { ok: false, error: new Error(errorMsg) };
+	}
+
+	const response = await fetch(`/api/legacy/user/sets/overview/save?setlistId=${setId}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(setlistSongs) });
+	let error = checkHttpResponse(response, `saving sets overview for setId=${setId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<SetOverview[]> = await response.json();
+	error = checkErrorResponse(data, `saving set overview for setId=${setId}`, false);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: setId };
 }
 
 /**
