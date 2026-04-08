@@ -20,9 +20,14 @@
 	let draggedSongId: number | null = $state(null);
 	let dragOverSongId: number | null = $state(null);
 	let dragPosition: 'above' | 'below' | null = $state(null);
+	let availableFilter = $state('');
 
 	let availableSongs = $derived(
 		songs.filter(song => !setSongs.some(setSong => setSong.id === song.id))
+	);
+
+	let filteredAvailableSongs = $derived(
+		availableSongs.filter(song => song.name.toLowerCase().includes(availableFilter.toLowerCase()))
 	);
 
 	$effect(() => {
@@ -200,9 +205,17 @@
 				<div class="panel-header">
 					<h3>Available Songs</h3>
 				</div>
-				{#if availableSongs.length > 0}
+				<div class="filter-row">
+				<input
+					type="text"
+					placeholder="Filter available songs..."
+					class="search-input"
+					bind:value={availableFilter}
+				/>
+			</div>
+			{#if filteredAvailableSongs.length > 0}
 					<ul class="song-list">
-						{#each availableSongs as song}
+						{#each filteredAvailableSongs as song}
 							<li class="song-row">
 								<div class="song-details">
 									<span class="song-title">{song.name}</span>
@@ -215,9 +228,11 @@
 						{/each}
 					</ul>
 				{:else}
-					<div class="empty-state">All songs are currently in the set.</div>
-				{/if}
-			</div>
+				<div class="empty-state">
+					{availableSongs.length === 0
+						? 'All songs are currently in the set.'
+						: 'No available songs match your filter.'}
+				</div>
 
 			<div class="song-panel set-panel">
 				<div class="panel-header">
@@ -306,6 +321,11 @@
 		gap: 0.75rem;
 		border-bottom: 1px solid #eee;
 		padding-bottom: 0.75rem;
+	}
+
+	.filter-row {
+		display: flex;
+		padding: 0 0.25rem;
 	}
 
 	.panel-header h3 {
