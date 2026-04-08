@@ -183,15 +183,24 @@
 		// Update setOrder for all songs
 		setSongs = nextSongs.map((song, index) => ({ ...song, setOrder: index + 1 }));
 	}
+
+	async function saveSet() {
+		// TODO: Implement save functionality
+		console.log('Saving set with songs:', setSongs);
+		alert('Save functionality not yet implemented');
+	}
 </script>
 
 <section class="song-editor-form">
 	<div class="form-heading">
-		<div>
+		<div class="header-content">
 			{#if setComplete}
 				<h2>Set {setComplete.name} Editor</h2>
 			{/if}
-			<button on:click={() => router.replace('Setlists')}>Cancel</button>
+			<div class="header-buttons">
+				<button class="control-btn" on:click={saveSet}>Save</button>
+				<button class="control-btn cancel-btn" on:click={() => router.replace('Setlists')}>Cancel</button>
+			</div>
 		</div>
 		<p class="hint">Drag songs on the right to reorder the set. Add available songs from the left.</p>
 	</div>
@@ -278,24 +287,69 @@
 	}
 
 	.form-heading {
+		background: rgba(33, 53, 71, 0.8);
+		border: 1px solid rgba(100, 150, 200, 0.3);
+		border-radius: 12px;
+		padding: 2rem;
+		transition: all 0.3s ease;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 1rem;
+	}
+
+	.form-heading:hover {
+		border-color: #6b9ec4;
+		background: rgba(33, 53, 71, 0.95);
+	}
+
+	.header-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.form-heading h2 {
 		margin: 0;
-		font-size: 1.4rem;
+		font-size: 1.8rem;
+		color: #ffffff;
 	}
 
-	.set-meta {
-		margin: 0.25rem 0 0;
-		color: #555;
+	.header-buttons {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.control-btn {
+		background: #239fc4;
+		color: #ffffff;
+		border: none;
+		padding: 0.75rem 1.5rem;
+		border-radius: 6px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.control-btn:hover:not(:disabled) {
+		background: #1a7a9a;
+		transform: translateY(-1px);
+	}
+
+	.cancel-btn {
+		background: #6b7280;
+	}
+
+	.cancel-btn:hover {
+		background: #4b5563;
 	}
 
 	.hint {
 		font-size: 0.95rem;
-		color: #666;
+		color: #a0a0a0;
+		margin: 0;
 	}
 
 	.song-panels {
