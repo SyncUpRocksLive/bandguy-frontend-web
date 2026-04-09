@@ -151,15 +151,40 @@
 			const item = { ...sets[setIndex], ...changes };
 			console.log('Updated set to save:', item);
 
+			// If item already exists, and no detectable changes, skip save
+			if (item.id > 0 && orgSet.name === item.name) {
+				// TODO: show better UI. And, and revert change
+				console.log('No changes detected, skipping save');
+				return;
+			}
+
+			const cleanNewName = item.name.trim();
+
+			if (cleanNewName === '') {
+				error = 'Setlist name cannot be empty';
+				return;
+			}
+
+			item.name = cleanNewName;
+
+			// TODO: Check locally for duplicated set name before saving. TServer will force new name, lets prevent
+			const duplicate = sets.find(s => s.id !== item.id && s.name.trim().toLowerCase() === cleanNewName.toLowerCase());
+			if (duplicate) {	
+				error = `A setlist with the name "${cleanNewName}" already exists. Please choose a different name.`;
+				return;
+			}
+
 			loading = true;
 			error = null;
 			try {
-				// const result = await saveSet(item.id > 0 ? item.id : null, item.name);
-				// if (result.ok) {
-				// 	item.id = result.value;
-				// } else {
-				// 	error = result.error.message;
-				// }
+				// TODO: SaveSet should return the full updated set name, id, and createdAtMsUtc, tags, etc to avoid any discrepancies. For now we just update the id for new sets.
+				// IF a "Copy 1" was added in backend, we wouldn't know about it here and it would be lost on next save. This is a band-aid to at least update the id for new sets created in the UI.
+				const result = await saveSet(item.id > 0 ? item.id : null, cleanNewName);
+				if (result.ok) {
+				 	item.id = result.value;
+				} else {
+				 	error = result.error.message;
+				}
 			} catch (err) {
 				error = err instanceof Error ? err.message : 'Unknown error';
 			} finally {

@@ -149,7 +149,7 @@
 		if (editingItemId === null) return;
 		const item = items.find(item => config.getItemId(item) === editingItemId);
 		if (item) {
-			onsave?.(item, { changes: editingValues });
+			onsave?.(item, editingValues);
 		}
 
 		editingItemId = null;
