@@ -117,3 +117,37 @@ export const getSongsOverview = async (musicianId: string) : Promise<Result<Song
 
 	return { ok: true, value: data.data ?? [] };
 }
+
+export const deleteSet = async (setId: number) : Promise<Result<void>> => {
+	const response = await fetch(`/api/legacy/user/sets/delete/${setId}`, { method: "DELETE", headers: { "Content-Type": "application/json" }});
+	let error = checkHttpResponse(response, `deleting set with setId=${setId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<void> = await response.json();
+	error = checkErrorResponse(data, `deleting set with setId=${setId}`, false);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: undefined };
+}
+
+export const saveSet = async (setId: number | null, setlistName: string) : Promise<Result<number>> => {
+	if (!setlistName || setlistName.trim() === '') {
+		const errorMsg = `Setlist name cannot be empty`;
+		LogError(errorMsg);
+		return { ok: false, error: new Error(errorMsg) };
+	}
+
+	const response = await fetch(`/api/legacy/user/sets/save?setlistName=${encodeURIComponent(setlistName)}${setId ? `&setlistId=${setId}` : ''}`, { method: "POST", headers: { "Content-Type": "application/json" } });
+	let error = checkHttpResponse(response, `saving set with setId=${setId ?? 'new'}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<number> = await response.json();
+	error = checkErrorResponse(data, `saving set with setId=${setId ?? 'new'}`, false);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: data.data! };
+}

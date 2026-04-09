@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { auth } from "@/Auth.svelte";
-	import { getSetsOverview } from "@shared/services/syncuprocks/musician/Api";
+	import { deleteSet, getSetsOverview, saveSet } from "@shared/services/syncuprocks/musician/Api";
 	import type { SetOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 	import Upload from "./components/setlist/Upload.svelte";
@@ -107,20 +107,66 @@
 		nextTempId--;
 		sets = [newSet, ...sets];
 		selectedSet = newSet;
+
+		tableRef.startEdit(newSet);
 	}
 
-	function handleTableDelete(item: SetOverview) {
+	async function handleTableDelete(item: SetOverview) {
 		const setToDelete = item;
 		console.log('Deleting setlist:', setToDelete.id);
-		// TODO: Implement actual delete API call
-		sets = [...sets.filter(s => s.id !== setToDelete.id)];
-		//selectedSet = null;
+		
+		if (!auth.user?.userId) 
+			return;
+
+		if (setToDelete.id < 0) {
+			sets = sets.filter(s => s.id !== setToDelete.id);
+			return;
+		}
+		
+		loading = true;
+		error = null;
+		try {
+			const result = await deleteSet(setToDelete.id);
+			if (result.ok) {
+				sets = [...sets.filter(s => s.id !== setToDelete.id)];
+			} else {
+				error = result.error.message;
+			}
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			loading = false;
+		}
 	}
 
-	function handleTableSave(item: SetOverview, changes: Record<string, any>) {
+	async function handleTableSave(item: SetOverview, changes: Record<string, any>) {
+		if (!auth.user?.userId) 
+			return;
+
+		console.log('Saving changes for set:', item, changes);
 		const setIndex = sets.findIndex(s => s.id === item.id);
 		if (setIndex !== -1) {
-			sets[setIndex] = { ...sets[setIndex], ...changes };
+			const orgSet = sets[setIndex];
+			console.log('Original set before save:', orgSet);
+			const item = { ...sets[setIndex], ...changes };
+			console.log('Updated set to save:', item);
+
+			loading = true;
+			error = null;
+			try {
+				// const result = await saveSet(item.id > 0 ? item.id : null, item.name);
+				// if (result.ok) {
+				// 	item.id = result.value;
+				// } else {
+				// 	error = result.error.message;
+				// }
+			} catch (err) {
+				error = err instanceof Error ? err.message : 'Unknown error';
+			} finally {
+				loading = false;
+			}
+
+			sets[setIndex] = item;
 			sets = sets; // Trigger reactivity
 		}
 	}
