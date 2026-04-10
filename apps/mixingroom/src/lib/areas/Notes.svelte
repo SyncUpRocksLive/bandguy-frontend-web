@@ -1,5 +1,1 @@
-<script lang="ts">
-	import { appState } from "../../State.svelte";
-</script>
-
-<p>Notes</p>
+<p>Sorry - area not implemented - please check back later</p>

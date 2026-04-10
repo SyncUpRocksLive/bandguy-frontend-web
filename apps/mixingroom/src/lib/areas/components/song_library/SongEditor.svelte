@@ -1,22 +1,28 @@
 <script lang="ts">
-	import TrackEditor from '@/lib/components/TrackEditor/TrackEditor.svelte';
+	import TrackEditor from '@/lib/components/track_editor/TrackEditor.svelte';
 	import { getSongComplete, saveTrack, deleteTrack, createTrack } from '@shared/services/syncuprocks/musician/Api';
 	import type { Song, Track } from '@shared/services/syncuprocks/musician/Types';
 
 	interface Props {
-		songId: number;
-		songName?: string;
+		songId?: number;
 	}
 
-	const { songId, songName = 'Untitled Song' }: Props = $props();
+	const { songId }: Props = $props();
 
 	let song: Song | null = $state(null);
 	let tracks: Track[] = $state([]);
 	let loading = $state(false);
 	let error: string | null = $state(null);
+	let songName = $state('');
 
 	// Initialize: Fetch song and tracks
 	async function loadSong() {
+		if (!songId) {
+			songName = 'Untitled';
+			tracks = [];
+			return;
+		}
+
 		loading = true;
 		error = null;
 		try {
@@ -32,6 +38,7 @@
 				return;
 			}
 
+			songName = songData.name;
 			song = songData;
 			tracks = songData.tracks || [];
 		} catch (err) {
@@ -46,7 +53,7 @@
 		loading = true;
 		error = null;
 		try {
-			const result = await saveTrack(songId, track);
+			const result = await saveTrack(songId!, track);
 			if (!result.ok) {
 				error = result.error.message;
 				return;
@@ -65,7 +72,7 @@
 		loading = true;
 		error = null;
 		try {
-			const result = await deleteTrack(songId, trackId);
+			const result = await deleteTrack(songId!, trackId);
 			if (!result.ok) {
 				error = result.error.message;
 				return;
@@ -84,7 +91,7 @@
 		loading = true;
 		error = null;
 		try {
-			const result = await createTrack(songId, newTrack);
+			const result = await createTrack(songId!, newTrack);
 			if (!result.ok) {
 				error = result.error.message;
 				return;

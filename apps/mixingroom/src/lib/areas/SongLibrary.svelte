@@ -154,8 +154,7 @@
 	{#if router.route.params && router.route.params.length > 0}
 		<!-- <TrackEditor /> -->
 		<SongEditor 
-		songId={parseInt(router.route.params[0])} 
-		songName={songs.find(s => s.id === parseInt(router.route.params[0]))?.name || 'Untitled Song'}
+			songId={Number.isInteger(+router.route.params[0]) ? parseInt(router.route.params[0], 10) : undefined} 
 		/>
 	{:else}
 	<BasicTableEdit
