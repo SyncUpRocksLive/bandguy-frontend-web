@@ -21,8 +21,8 @@
 	];
 
 	const formatOptions = [
-		{ value: 'Lyric', label: 'Lyric File', description: 'Contains timing and chord information' },
-		{ value: 'Text', label: 'Plain Text', description: 'Static text without timing' }
+		{ value: 'Lyric', label: 'Lyric File', description: 'Contains timing and chord information', help: 'https://en.wikipedia.org/wiki/LRC_(file_format)' },
+		{ value: 'Text', label: 'Plain Text', description: 'Static text without timing', help: ''}
 	];
 
 	function validate(): boolean {
@@ -61,12 +61,13 @@
 
 <div class="modal-overlay" onclick={handleCancel}>
 	<div class="modal-dialog" onclick={(e) => e.stopPropagation()}>
-		<div class="modal-header">
-			<h3>Add New Track</h3>
-			<button class="btn-close" onclick={handleCancel} aria-label="Close">✕</button>
-		</div>
 
 		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Add New Track</h3>
+				<button class="btn-close" onclick={handleCancel} aria-label="Close">✕</button>
+			</div>
+
 			<!-- Track Name -->
 			<div class="form-group">
 				<label for="track-name">Track Name <span class="required">*</span></label>
@@ -119,6 +120,9 @@
 							<div class="option-content">
 								<span class="option-label">{option.label}</span>
 								<span class="option-description">{option.description}</span>
+								{#if option.help}
+									<a href={option.help} target="_blank" rel="noopener" class="option-help">Learn more</a>
+								{/if}
 							</div>
 						</label>
 					{/each}
@@ -132,11 +136,11 @@
 					The track format cannot be changed after creation. Choose carefully based on your content type.
 				</p>
 			</div>
-		</div>
 
-		<div class="modal-footer">
-			<button class="btn btn-secondary" onclick={handleCancel}>Cancel</button>
-			<button class="btn btn-primary" onclick={handleCreate}>Create Track</button>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" onclick={handleCancel}>Cancel</button>
+				<button class="btn btn-primary" onclick={handleCreate}>Create Track</button>
+			</div>
 		</div>
 	</div>
 </div>

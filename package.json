@@ -10,8 +10,6 @@
   ],
   "scripts": {
     "dev-all": "concurrently -n \"LANDING,JAM\" -c \"magenta,yellow,cyan,blue\" \"vite\" \"npm run dev --workspace=apps/jam\" \"npm run dev --workspace=apps/mixingroom\"",
-    "dev-jam": "concurrently -n \"LANDING,JAM\" -c \"magenta,yellow,cyan,blue\" \"vite\" \"npm run dev --workspace=apps/jam\" ",
-    "dev-static": "concurrently -n \"LANDING\" -c \"magenta,yellow,cyan,blue\" \"vite\" ",
     "build": "npm run build --workspaces",
     "install-all": "npm install && npm install --workspaces"
   },
