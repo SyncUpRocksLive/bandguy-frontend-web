@@ -228,7 +228,7 @@
 			{/if}
 			<div class="header-buttons">
 				<button class="control-btn" on:click={saveSet} disabled={!hasChanges}>Save</button>
-				<button class="control-btn cancel-btn" on:click={() => router.replace('Setlists')}>Cancel</button>
+				<button class="control-btn cancel-btn" on:click={() => router.back('Setlists')}>Cancel</button>
 			</div>
 		</div>
 	</div>

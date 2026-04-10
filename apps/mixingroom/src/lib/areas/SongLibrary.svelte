@@ -158,7 +158,7 @@
 
 	function handleTableOpen(item: SongOverview) {
 		console.log('Opening song:', item);
-		router.replace('SongLibrary', [`${item.id}`]);
+		router.navigate('SongLibrary', [`${item.id}`]);
 	}
 
 </script>

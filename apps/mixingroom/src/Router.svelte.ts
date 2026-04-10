@@ -81,6 +81,16 @@ class Router {
 			}
 		};
 	}
+
+	back(fallbackArea: ViewArea = 'Home') {
+        // If there is history to go back to within the session
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Otherwise, just reset to a safe view
+            this.replace(fallbackArea);
+        }
+    }
 }
 
 export const router = new Router();
