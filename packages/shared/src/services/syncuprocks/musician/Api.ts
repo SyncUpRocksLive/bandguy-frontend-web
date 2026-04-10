@@ -132,19 +132,21 @@ export const deleteSet = async (setId: number) : Promise<Result<void>> => {
 	return { ok: true, value: undefined };
 }
 
-export const saveSet = async (setId: number | null, setlistName: string) : Promise<Result<number>> => {
+export const saveSet = async (setId: number | null, setlistName: string) : Promise<Result<SetOverview>> => {
 	if (!setlistName || setlistName.trim() === '') {
 		const errorMsg = `Setlist name cannot be empty`;
 		LogError(errorMsg);
 		return { ok: false, error: new Error(errorMsg) };
 	}
 
-	const response = await fetch(`/api/legacy/user/sets/save?setlistName=${encodeURIComponent(setlistName)}${setId ? `&setlistId=${setId}` : ''}`, { method: "POST", headers: { "Content-Type": "application/json" } });
+	const url = setId ? `/api/legacy/user/sets/save?setlistId=${setId}&setlistName=${encodeURIComponent(setlistName)}` : `/api/legacy/user/sets/save?setlistName=${encodeURIComponent(setlistName)}`;
+	console.log(`Saving set with URL: ${url}`);
+	const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" } });
 	let error = checkHttpResponse(response, `saving set with setId=${setId ?? 'new'}`);
 	if (error)
 		return { ok: false, error };
 
-	const data: ApiResponseBase<number> = await response.json();
+	const data: ApiResponseBase<SetOverview> = await response.json();
 	error = checkErrorResponse(data, `saving set with setId=${setId ?? 'new'}`, false);
 	if (error)
 		return { ok: false, error };

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { auth } from "@/Auth.svelte";
-	import { deleteSet, getSetsOverview, saveSet } from "@shared/services/syncuprocks/musician/Api";
+	import { deleteSet, getSetsOverview, saveSet, saveSetsOverview } from "@shared/services/syncuprocks/musician/Api";
 	import type { SetOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 	import Upload from "./components/setlist/Upload.svelte";
 	import { router } from "@/Router.svelte";
 	import SongEditor from "./components/setlist/SongEditor.svelte";
+	import { isTemplateSpan } from "typescript";
 
 	let tableRef: BasicTableEdit;
 	let sets: SetOverview[] = [];
@@ -181,7 +182,9 @@
 				// IF a "Copy 1" was added in backend, we wouldn't know about it here and it would be lost on next save. This is a band-aid to at least update the id for new sets created in the UI.
 				const result = await saveSet(item.id > 0 ? item.id : null, cleanNewName);
 				if (result.ok) {
-				 	item.id = result.value;
+				 	item.id = result.value.id;
+					item.createdAtMsUtc = result.value.createdAtMsUtc;
+					item.name = result.value.name;
 				} else {
 				 	error = result.error.message;
 				}
@@ -203,19 +206,60 @@
 		}
 	}
 
-	function handleTableClone(item: SetOverview) {
-		const newSet: SetOverview = {
-			musicianId: 0,
-			id: nextTempId,
-			name: item.name + ' Copy',
-			createdAtMsUtc: Date.now(),
-			songs: [...item.songs]
+	async function handleTableClone(item: SetOverview) {
+		if (!auth.user?.userId) 
+			return;
+
+		if (item.id <= 0 || item.songs.length === 0) {
+			error = 'Cannot clone an unsaved setlist or a setlist with no songs.';
+			return;
+		}
+
+		if (sets.length >= 10) {
+			error = 'You have reached the maximum number of setlists allowed (100). Please delete some setlists before creating new ones.';
+			return;
+		}
+
+		const newItem = { ...item, 
+			id: nextTempId, 
+			name: item.name + ' Copy', 
+			createdAtMsUtc: Date.now() 
 		};
 		nextTempId--;
-		sets = [newSet, ...sets].sort((a, b) => a.name.localeCompare(b.name));
-		selectedSet = newSet;
 
-		tableRef.startEdit(newSet);
+		loading = true;
+		error = null;
+		try {
+			const result = await saveSet(null, newItem.name);
+			if (result.ok) {
+				newItem.id = result.value.id;
+				newItem.createdAtMsUtc = result.value.createdAtMsUtc;
+				newItem.name = result.value.name;
+			} else {
+				error = result.error.message;
+			}
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Unknown error';
+			return;
+		} finally {
+			loading = false;
+		}
+
+		loading = true;
+		error = null;
+		try {
+			const result = await saveSetsOverview(newItem.id, newItem.songs);
+			if (!result.ok) {
+				error = result.error.message;
+			}
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			loading = false;
+		}
+
+		sets = [newItem, ...sets].sort((a, b) => a.name.localeCompare(b.name));
+		tableRef.startEdit(newItem);
 	}
 
 	function handleTableOpen(item: SetOverview) {
