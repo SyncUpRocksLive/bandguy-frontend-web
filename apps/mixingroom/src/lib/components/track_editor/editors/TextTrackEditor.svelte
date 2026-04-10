@@ -62,18 +62,32 @@
 	<div class="editor-section">
 		<h4>Metadata</h4>
 		<div class="metadata-display">
-			<p>
-				<strong>Format:</strong>
-				<code>{track.format}</code>
-			</p>
-			<p>
-				<strong>Content Length:</strong>
-				<code>{textContent.length} characters</code>
-			</p>
-			<p>
-				<strong>Lines:</strong>
-				<code>{textContent.split('\n').length}</code>
-			</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Property</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Track ID</td>
+						<td>{track.id}</td>
+					</tr>
+					<tr>
+						<td>Fileset ID</td>
+						<td>{track.fileSetId}</td>
+					</tr>
+					<tr>
+						<td>Version Number</td>
+						<td>{track.versionNumber}</td>
+					</tr>
+					<tr>
+						<td>Created At Id</td>
+						<td>{new Date(track.createdAtMsUtc).toLocaleString()}</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
