@@ -98,62 +98,20 @@
 		return mockTags[setId] || [];
 	}
 
-	function handleTableSelect(item: SongOverview) {
-		console.log('Selected song:', selectedSong);
-	}
-
 	function handleTableCreate() {
-		const newSong: SongOverview = {
-			id: nextTempId,
-			name: 'Song',
-			createdAtMsUtc: Date.now(),
-			setOrder: 0
-		};
-		nextTempId--;
-		songs = [newSong, ...songs];
-		selectedSong = newSong;
-
-		tableRef.startEdit(newSong);
+		router.navigate('SongLibrary', ['create']);
 	}
 
 	function handleTableDelete(item: SongOverview) {
-		const songToDelete = item;
-		console.log('Deleting song:', songToDelete.id);
-		// TODO: Implement actual delete API call
-		songs = [...songs.filter(s => s.id !== songToDelete.id)];
-		selectedSong = null;
-	}
-
-	function handleTableSave(item: SongOverview, changes: Record<string, any>) {
-		const songIndex = songs.findIndex(s => s.id === item.id);
-		if (songIndex !== -1) {
-			songs[songIndex] = { ...songs[songIndex], ...changes };
-			songs = songs; // Trigger reactivity
-		}
-	}
-
-	function handleTableCancel(item: SongOverview) {
-		// If it was a new song that hasn't been saved, remove it
-		console.log('Canceling edit for song:', item);
-		if (item.id < 0) {
+		if (item.id <= 0) {
 			songs = songs.filter(s => s.id !== item.id);
+			return;
 		}
-	}
 
-	function handleTableClone(item: SongOverview) {
-		const newSong: SongOverview = {
-			...item,
-			id: nextTempId,
-			name: `${item.name} (Copy)`,
-			createdAtMsUtc: Date.now()
-		};
-		nextTempId--;
-		songs = [newSong, ...songs].sort((a, b) => a.name.localeCompare(b.name));
-		selectedSong = newSong;
-
-		// TODO: Will need API to clone tracks
-
-		tableRef.startEdit(newSong);
+		console.log('Deleting song:', item.id);
+		// TODO: Implement actual delete API call
+		songs = [...songs.filter(s => s.id !== item.id)];
+		selectedSong = null;
 	}
 
 	function handleTableOpen(item: SongOverview) {
@@ -177,12 +135,8 @@
 		bind:loading={loading}
 		bind:error={error}
 		bind:selectedItem={selectedSong}
-		onselect={handleTableSelect}
 		oncreate={handleTableCreate}
 		ondelete={handleTableDelete}
-		onsave={handleTableSave}
-		oncancel={handleTableCancel}
-		onclone={handleTableClone}
 		onopen={handleTableOpen}
 	/>
 	{/if}

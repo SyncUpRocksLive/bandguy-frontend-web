@@ -24,6 +24,7 @@
 		confirmDeleteMessage?: (item: T) => string;
 		getItemId: (item: T) => string | number;
 		getItemDisplayName?: (item: T) => string;
+		allowEditing?: boolean;
 	}
 
 	// Component props
@@ -246,10 +247,12 @@
 									<button class="btn-small btn-cancel" onclick={cancelEdit}>✕</button>
 								</div>
 							{:else}
+								{#if config.allowEditing}
 								<button
 									class="btn-small btn-edit"
 									onclick={(e) => { e.stopPropagation(); startEdit(item); }}
 									title="Edit">✎</button>
+								{/if}
 								{#if onclone}
 									<button
 										class="btn-small btn-edit"

@@ -62,7 +62,8 @@
 		deleteButtonText: 'Delete',
 		confirmDeleteMessage: (set) => `Are you sure you want to delete "${set.name}"? Important: Songs will not be deleted`,
 		getItemId: (set) => set.id,
-		getItemDisplayName: (set) => set.name
+		getItemDisplayName: (set) => set.name,
+		allowEditing: true
 	};
 
 	// Reactive statement to fetch sets when user changes
