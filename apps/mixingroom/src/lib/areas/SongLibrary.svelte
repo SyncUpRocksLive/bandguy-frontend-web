@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { auth } from "@/Auth.svelte";
 	import { msToHMS } from "@shared/display/DisplayHelpers";
-	import { getSongsOverview } from "@shared/services/syncuprocks/musician/Api";
+	import { deleteSong, getSongsOverview } from "@shared/services/syncuprocks/musician/Api";
 	import type { SongOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 	import { router } from "@/Router.svelte";
@@ -102,15 +102,32 @@
 		router.navigate('SongLibrary', ['create']);
 	}
 
-	function handleTableDelete(item: SongOverview) {
+	async function handleTableDelete(item: SongOverview) {
+		if (!auth.user?.userId) 
+			return;
+
 		if (item.id <= 0) {
 			songs = songs.filter(s => s.id !== item.id);
 			return;
 		}
 
 		console.log('Deleting song:', item.id);
-		// TODO: Implement actual delete API call
-		songs = [...songs.filter(s => s.id !== item.id)];
+	
+		loading = true;
+		error = null;
+		try {
+			const result = await deleteSong(item.id);
+			if (result.ok) {
+				songs = [...songs.filter(s => s.id !== item.id)];
+			} else {
+				error = result.error.message;
+			}
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Unknown error';
+		} finally {
+			loading = false;
+		}
+
 		selectedSong = null;
 	}
 

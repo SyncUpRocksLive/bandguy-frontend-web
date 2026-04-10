@@ -153,3 +153,17 @@ export const saveSet = async (setId: number | null, setlistName: string) : Promi
 
 	return { ok: true, value: data.data! };
 }
+
+export const deleteSong = async (songId: number) : Promise<Result<void>> => {
+	const response = await fetch(`/api/legacy/user/songs/delete/${songId}`, { method: "DELETE", headers: { "Content-Type": "application/json" }});
+	let error = checkHttpResponse(response, `deleting song with songId=${songId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<void> = await response.json();
+	error = checkErrorResponse(data, `deleting song with songId=${songId}`, false);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: undefined };
+}
