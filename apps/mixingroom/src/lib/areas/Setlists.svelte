@@ -6,8 +6,7 @@
 	import Upload from "./components/setlist/Upload.svelte";
 	import { router } from "@/Router.svelte";
 	import SongEditor from "./components/setlist/SongEditor.svelte";
-	import { isTemplateSpan } from "typescript";
-
+	
 	let tableRef: BasicTableEdit;
 	let sets: SetOverview[] = [];
 	let selectedSet: SetOverview | null = null;

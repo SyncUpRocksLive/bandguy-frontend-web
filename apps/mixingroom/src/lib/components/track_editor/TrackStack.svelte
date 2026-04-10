@@ -11,25 +11,6 @@
 	}
 
 	const { tracks = [], selectedTrack = null, onselect, ondelete, onadd }: Props = $props();
-
-	const typeIcons: Record<string, string> = {
-		vocals: '🎤',
-		drums: '🥁',
-		bass: '🎸',
-		guitar: '🎸',
-		metronome: '⏱️',
-		keyboard: '🎹',
-		text: '📝',
-		default: '🎵'
-	};
-
-	function getIcon(type: string): string {
-		return typeIcons[type.toLowerCase()] || typeIcons.default;
-	}
-
-	function formatBadgeClass(format: string): string {
-		return `format-badge format-${format.toLowerCase()}`;
-	}
 </script>
 
 <div class="track-stack">
@@ -63,7 +44,7 @@
 	.track-stack {
 		display: flex;
 		flex-direction: column;
-		width: 30%;
+		width: 20%;
 		background-color: #f5f5f5;
 		border-right: 1px solid #ddd;
 		min-width: 250px;

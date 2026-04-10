@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Track } from '@shared/services/syncuprocks/musician/Types';
+	import { getTextBadge } from '@shared/display/DisplayHelpers';
 
 	interface Props {
 		track: Track;
@@ -9,21 +10,6 @@
 	}
 
 	const { track, isSelected = false, onselect, ondelete }: Props = $props();
-
-	const typeIcons: Record<string, string> = {
-		vocals: '🎤',
-		drums: '🥁',
-		bass: '🎸',
-		guitar: '🎸',
-		metronome: '⏱️',
-		keyboard: '🎹',
-		text: '📝',
-		default: '🎵'
-	};
-
-	function getIcon(type: string): string {
-		return typeIcons[type.toLowerCase()] || typeIcons.default;
-	}
 
 	function formatBadgeClass(format: string): string {
 		return `format-badge format-${format.toLowerCase()}`;
@@ -37,7 +23,7 @@
 
 <div class="track-card" class:selected={isSelected} onclick={onselect}>
 	<div class="track-content">
-		<div class="track-icon">{getIcon(track.type)}</div>
+		<div class="track-icon">{getTextBadge(track.type)}</div>
 		<div class="track-info">
 			<div class="track-name">{track.name}</div>
 			<div class="track-meta">

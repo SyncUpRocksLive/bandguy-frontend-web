@@ -10,3 +10,19 @@ export function msToHMS(ms: number) {
 		useGrouping: false
 	})}`;
 }
+
+const typeIcons: Record<string, string> = {
+	vocals: '🎤',
+	leadvocals: '🎤',
+	drums: '🥁',
+	bass: '🎸',
+	guitar: '🎸',
+	metronome: '⏱️',
+	keyboard: '🎹',
+	text: '📝',
+	default: '🎵'
+};
+
+export function getTextBadge(type: string): string {
+	return typeIcons[type.toLowerCase()] || typeIcons.default;
+}

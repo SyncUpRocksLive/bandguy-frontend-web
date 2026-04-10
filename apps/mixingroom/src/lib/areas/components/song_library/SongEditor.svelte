@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TrackEditor from '@/lib/components/track_editor/TrackEditor.svelte';
+	import { msToHMS } from '@shared/display/DisplayHelpers';
 	import { getSongComplete, saveTrack, deleteTrack, createTrack } from '@shared/services/syncuprocks/musician/Api';
 	import type { Song, Track } from '@shared/services/syncuprocks/musician/Types';
 
@@ -116,15 +117,14 @@
 <div class="song-editor">
 	<header class="editor-header">
 		<div class="header-info">
-			<h2>{song?.name ?? songName}</h2>
+			<h2>{songName}</h2>
 			<p class="song-meta">
-				Song ID: {songId} • {tracks.length} track{tracks.length !== 1 ? 's' : ''} • Duration: {song
-					? Math.round(song.durationMilliseconds / 1000)
-					: 0}s
+				Song ID: {songId} • {tracks.length} track{tracks.length !== 1 ? 's' : ''} • Duration: {song ? msToHMS(song.durationMilliseconds) : ''}
 			</p>
 		</div>
 		<div class="header-actions">
 			<!-- Future: Add global save, publish, etc. -->
+			 Psdsd
 		</div>
 	</header>
 
