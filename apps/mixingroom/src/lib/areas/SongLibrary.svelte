@@ -141,8 +141,6 @@
 <div class="setlist-library">
 
 	{#if router.route.params && router.route.params.length > 0}
-		<button onclick={() => router.replace('SongLibrary')}>Back to SongLibrary</button>
-		<h1>Edit Song {router.route.params[0]}</h1>
 		<TrackEditor />
 	{:else}
 	<BasicTableEdit
