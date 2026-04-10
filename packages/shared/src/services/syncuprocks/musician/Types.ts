@@ -34,7 +34,7 @@ export interface Track {
 	id: number;
 	songId: number;
 	fileSetId: number;
-	name: TrackType;
+	name: string;
 	type: TrackType;
 	format: TrackFormat;
 	createdAtMsUtc: number;

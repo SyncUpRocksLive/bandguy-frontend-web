@@ -5,7 +5,7 @@
 	import type { SongOverview } from "@shared/services/syncuprocks/musician/Types";
 	import BasicTableEdit, { type ColumnDefinition, type TableConfig } from "@/lib/components/BasicTableEdit.svelte";
 	import { router } from "@/Router.svelte";
-	import TrackEditor from "./components/song_library/TrackEditor.svelte";
+	import SongEditor from "./components/song_library/SongEditor.svelte";
 
 	let tableRef: BasicTableEdit;
 	let songs: SongOverview[] = [];
@@ -72,23 +72,34 @@
 
 	// Reactive statement to fetch songs when user changes
 	$: if (auth.user?.userId) {
+		console.log('Auth user changed, fetching songs for userId:', auth.user.userId);
 		fetchSongs();
+	} else {
+		console.log('No auth user or userId, auth.user:', auth.user);
 	}
 
 	async function fetchSongs() {
-		if (!auth.user?.userId) return;
-		
+		if (!auth.user?.userId) {
+			console.log('fetchSongs called but no userId');
+			return;
+		}
+
+		console.log('fetchSongs called with userId:', auth.user.userId);
 		loading = true;
 		error = null;
 		try {
 			const result = await getSongsOverview(auth.user.userId);
+			console.log('getSongsOverview result:', result);
 			if (result.ok) {
 				songs = result.value.sort((a, b) => a.name.localeCompare(b.name));
+				console.log('Songs loaded:', songs.length);
 			} else {
 				error = result.error.message;
+				console.error('Error loading songs:', error);
 			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Unknown error';
+			console.error('Exception in fetchSongs:', err);
 		} finally {
 			loading = false;
 		}
@@ -141,7 +152,11 @@
 <div class="setlist-library">
 
 	{#if router.route.params && router.route.params.length > 0}
-		<TrackEditor />
+		<!-- <TrackEditor /> -->
+		<SongEditor 
+		songId={parseInt(router.route.params[0])} 
+		songName={songs.find(s => s.id === parseInt(router.route.params[0]))?.name || 'Untitled Song'}
+		/>
 	{:else}
 	<BasicTableEdit
 		bind:this={tableRef}
