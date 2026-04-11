@@ -192,53 +192,6 @@ export const saveTrack = async (songId: number, track: Track) : Promise<Result<T
 	return { ok: true, value: data.data! };
 }
 
-/**
- * Deletes an existing track.
- * @param songId Song Identifier
- * @param trackId Track ID to delete
- * @returns 
- */
-export const deleteTrack = async (songId: number, trackId: number) : Promise<Result<void>> => {
-	const response = await fetch(`/api/legacy/user/songs/${songId}/tracks/${trackId}`, { 
-		method: "DELETE", 
-		headers: { "Content-Type": "application/json" }
-	});
-	let error = checkHttpResponse(response, `deleting track with trackId=${trackId}`);
-	if (error)
-		return { ok: false, error };
-
-	const data: ApiResponseBase<void> = await response.json();
-	error = checkErrorResponse(data, `deleting track with trackId=${trackId}`, false);
-	if (error)
-		return { ok: false, error };
-
-	return { ok: true, value: undefined };
-}
-
-/**
- * Creates a new track in a song.
- * @param songId Song Identifier
- * @param track Track to create (without id and createdAtMsUtc)
- * @returns 
- */
-export const createTrack = async (songId: number, track: Omit<Track, 'id' | 'createdAtMsUtc'>) : Promise<Result<Track>> => {
-	const response = await fetch(`/api/legacy/user/songs/${songId}/tracks`, { 
-		method: "POST", 
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(track)
-	});
-	let error = checkHttpResponse(response, `creating track for songId=${songId}`);
-	if (error)
-		return { ok: false, error };
-
-	const data: ApiResponseBase<Track> = await response.json();
-	error = checkErrorResponse(data, `creating track for songId=${songId}`, true);
-	if (error)
-		return { ok: false, error };
-
-	return { ok: true, value: data.data! };
-}
-
 export const getSongComplete = async (songId: number) : Promise<Result<Song | null>> => {
 	const response = await fetch(`/api/legacy/user/songs/complete/${songId}`, { method: "GET", headers: { "Content-Type": "application/json" }});
 	let error = checkHttpResponse(response, `fetching complete song details for songId=${songId}`);
@@ -272,4 +225,48 @@ export const songSave = async (song: SongSaveRequest) : Promise<Result<SongSaveR
 		return { ok: false, error };
 
 	return { ok: true, value: data.data! };
+}
+
+export interface TrackCreateRequest {
+	songId: number;
+	name: string;
+	type: string;
+	format: string;
+	createdAtMsUtc: number;
+	configuration?: string;
+}
+
+export const createTrack = async (track: TrackCreateRequest) : Promise<Result<{ id: number; name: string }>> => {
+	const response = await fetch(`/api/legacy/user/songs/tracks/create`, { 
+		method: "POST", 
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(track)
+	});
+	let error = checkHttpResponse(response, `creating track for songId=${track.songId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<{ id: number; name: string }> = await response.json();
+	error = checkErrorResponse(data, `creating track for songId=${track.songId}`, true);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: data.data! };
+}
+
+export const deleteTrack = async (songId: number, trackId: number) : Promise<Result<void>> => {
+	const response = await fetch(`/api/legacy/user/songs/${songId}/tracks/${trackId}/delete`, { 
+		method: "DELETE", 
+		headers: { "Content-Type": "application/json" }
+	});
+	let error = checkHttpResponse(response, `deleting track with trackId=${trackId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<void> = await response.json();
+	error = checkErrorResponse(data, `deleting track with trackId=${trackId}`, false);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: undefined };
 }

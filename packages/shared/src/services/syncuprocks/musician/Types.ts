@@ -33,7 +33,7 @@ export enum TrackFormat {
 export interface Track {
 	id: number;
 	songId: number;
-	fileSetId: number;
+	fileSetId?: number;
 	name: string;
 	type: TrackType;
 	format: TrackFormat;

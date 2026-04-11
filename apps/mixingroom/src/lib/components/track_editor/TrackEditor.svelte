@@ -1,22 +1,19 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import TrackStack from './TrackStack.svelte';
 	import ContextualEditor from './ContextualEditor.svelte';
 	import AddTrackModal from './AddTrackModal.svelte';
 	import type { Track } from '@shared/services/syncuprocks/musician/Types';
 
 	interface Props {
-		songId?: number;
 		tracks?: Track[];
 		loading?: boolean;
 		error?: string | null;
 		onsave?: (track: Track) => void;
 		ondelete?: (trackId: number) => void;
-		oncreatetrack?: (track: Omit<Track, 'id' | 'createdAtMsUtc'>) => void;
+		oncreatetrack?: (track: Omit<Track, 'songId' | 'fileSetId' | 'id' | 'createdAtMsUtc'>) => void;
 	}
 
 	const {
-		songId,
 		tracks = $bindable([]),
 		loading = $bindable(false),
 		error = $bindable(null),
@@ -122,7 +119,6 @@
 	<!-- Add Track Modal -->
 	{#if showAddTrackModal}
 		<AddTrackModal
-			{songId}
 			oncreate={handleCreateTrack}
 			oncancel={() => (showAddTrackModal = false)}
 		/>

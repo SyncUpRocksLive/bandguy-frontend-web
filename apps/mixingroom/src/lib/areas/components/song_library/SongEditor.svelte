@@ -81,10 +81,15 @@
 
 	// Handle deleting a track
 	async function handleDeleteTrack(trackId: number) {
+		if (!song || song.id <= 0 || !trackId || trackId <= 0) {
+			console.error('handleDeleteTrack: No song loaded, cannot delete track');
+			return;
+		}
+
 		loading = true;
 		error = null;
 		try {
-			const result = await deleteTrack(songId!, trackId);
+			const result = await deleteTrack(song.id!, trackId);
 			if (!result.ok) {
 				error = result.error.message;
 				return;
@@ -99,36 +104,58 @@
 	}
 
 	// Handle creating a new track
-	async function handleCreateTrack(newTrack: Omit<Track, 'id' | 'createdAtMsUtc'>) {
+	async function handleCreateTrack(newTrack: Omit<Track, 'songId' | 'fileSetId' | 'id' | 'createdAtMsUtc'>) : Promise<boolean> {
+		if (!song || !await handleSaveSongItem({ name: song.name, durationMs: song.durationMilliseconds})) {
+			console.error('handleCreateTrack:No song loaded, cannot save');
+			return false;
+		}
+
 		loading = true;
 		error = null;
 		try {
-			const result = await createTrack(songId!, newTrack);
-			if (!result.ok) {
-				error = result.error.message;
-				return;
+			const newDto = { 
+				songId: song.id!, 
+				name: newTrack.name, 
+				type: newTrack.type, 
+				format: newTrack.format, 
+				createdAtMsUtc: Date.now(),
+				configuration: newTrack.configuration
 			}
 
-			tracks = [...tracks, result.value];
+			const result = await createTrack(newDto);
+
+			if (!result.ok) {
+				error = result.error.message;
+				return false;
+			}
+
+			tracks = [...tracks, {
+				...newTrack,
+				...newDto,
+				...result.value,
+			}];
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to create track';
+			return false;
 		} finally {
 			loading = false;
 		}
+
+		return true;
 	}
 
 	// Handle saving the song
-	async function handleSaveSongItem(data: { name: string; durationMs: number }) {
+	async function handleSaveSongItem(data: { name: string; durationMs: number }) : Promise<boolean> {
 		if (!song) {
-			console.error('No song loaded, cannot save');
-			return;
+			console.error('handleSaveSongItem: No song loaded, cannot save');
+			return false;
 		}
 
 		const needsSaving = song.id <= 0 || data.name !== song.name || data.durationMs !== song.durationMilliseconds;
 		if (!needsSaving) {
-			console.log('No changes detected, skipping save');
+			console.log('handleSaveSongItemNo changes detected, skipping save');
 			showEditModal = false;
-			return;
+			return true;
 		}
 
 		loading = true;
@@ -144,7 +171,7 @@
 			const result = await songSave(request);
 			if (!result.ok) {
 				error = result.error.message;
-				return;
+				return false;
 			}
 
 			song.id = result.value.id!;
@@ -152,10 +179,13 @@
 			song.durationMilliseconds = result.value.durationMilliseconds;
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to update song';
+			return false;
 		} finally {
 			loading = false;
 			showEditModal = false;
 		}
+
+		return true;
 	}
 
 	// Load song on mount
@@ -183,7 +213,6 @@
 
 	<main class="editor-main">
 		<TrackEditor
-			{songId}
 			bind:tracks
 			bind:loading
 			bind:error

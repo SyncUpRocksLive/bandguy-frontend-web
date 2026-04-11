@@ -2,14 +2,13 @@
 	import type { Track, TrackType, TrackFormat } from '@shared/services/syncuprocks/musician/Types';
 
 	interface Props {
-		songId: number;
 		oncreate?: (event: CustomEvent<Omit<Track, 'id' | 'createdAtMsUtc'>>) => void;
 		oncancel?: () => void;
 	}
 
-	const { songId, oncreate, oncancel }: Props = $props();
+	const { oncreate, oncancel }: Props = $props();
 
-	let trackName = $state('');
+	let trackName = $state('Track');
 	let trackType = $state('Guitar');
 	let trackFormat = $state('Lyric');
 	let errors = $state<Record<string, string>>({});
@@ -36,14 +35,12 @@
 	function handleCreate() {
 		if (!validate()) return;
 
-		const newTrack: Omit<Track, 'id' | 'createdAtMsUtc'> = {
-			songId,
-			fileSetId: 0,
+		const newTrack: Omit<Track, 'songId' | 'fileSetId' | 'id' | 'createdAtMsUtc'> = {
 			name: trackName.trim(),
 			type: trackType as TrackType,
 			format: trackFormat as TrackFormat,
 			versionNumber: 0,
-			configuration: null
+			configuration: undefined
 		};
 
 		const event = new CustomEvent('create', { detail: newTrack });
