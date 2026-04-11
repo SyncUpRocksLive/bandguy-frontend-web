@@ -53,11 +53,24 @@
 	}
 
 	function handleCancel() {
+		console.log('handleCancel: Edit cancelled, resetting values');
 		editName = name;
 		editDurationStr = msToHMS(durationMs);
 		errors = {};
 		oncancel?.();
 	}
+
+	function handleSubmit(e: SubmitEvent) {
+		console.log('handleSubmit called');
+        e.preventDefault(); // Prevents the page from reloading
+        handleSave();
+    }
+
+	function handleGlobalKeydown(e: KeyboardEvent) {
+        if (e.key === 'Escape') {
+            handleCancel();
+        }
+    }
 
 	let textRef: HTMLInputElement | null = null;
 
@@ -67,13 +80,13 @@
 	});
 </script>
 
-<div class="modal-overlay">
+<div class="modal-overlay" onkeydown={handleGlobalKeydown}>
 	<div class="modal-backdrop" onclick={handleCancel}></div>
-	<div class="modal-dialog" onclick={(e) => e.stopPropagation()}>
+	<form class="modal-dialog" onsubmit={handleSubmit}>
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3>Edit Song</h3>
-				<button class="btn-close" onclick={handleCancel} aria-label="Close">✕</button>
+				<button type="button" class="btn-close" onclick={handleCancel} aria-label="Close">✕</button>
 			</div>
 			<div class="form-group">
 				<label for="song-name">Song Name <span class="required">*</span></label>
@@ -81,8 +94,7 @@
 					bind:this={textRef}
 					id="song-name"
 					type="text"
-					value={editName}
-					onchange={(e) => (editName = (e.target as HTMLInputElement).value)}
+					bind:value={editName}
 					class:error={errors.name}
 				/>
 				{#if errors.name}
@@ -95,9 +107,8 @@
 				<input
 					id="song-duration"
 					type="text"
-					value={editDurationStr}
+					bind:value={editDurationStr}
 					placeholder="00:00"
-					onchange={(e) => (editDurationStr = (e.target as HTMLInputElement).value)}
 					class:error={errors.duration}
 				/>
 				{#if errors.duration}
@@ -105,11 +116,11 @@
 				{/if}
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-secondary" onclick={handleCancel}>Cancel</button>
-				<button class="btn btn-primary" onclick={handleSave}>Save</button>
+				<button type="button" class="btn btn-secondary" onclick={handleCancel}>Cancel</button>
+				<button type="submit" class="btn btn-primary">Save</button>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>
 
 <style>
