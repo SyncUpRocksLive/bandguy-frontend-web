@@ -252,3 +252,24 @@ export const getSongComplete = async (songId: number) : Promise<Result<Song | nu
 
 	return { ok: true, value: data.data! };
 }
+
+export interface SongSaveRequest {
+	id?: number;
+	name: string;
+	durationMilliseconds: number;
+	configuration?: string;
+}
+
+export const songSave = async (song: SongSaveRequest) : Promise<Result<SongSaveRequest>> => {
+	const response = await fetch(`/api/legacy/user/songs/save`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(song) });
+	let error = checkHttpResponse(response, `updating song for songId=${song.name}`);
+	if (error)
+		return { ok: false, error };
+
+	const data: ApiResponseBase<Song> = await response.json();
+	error = checkErrorResponse(data, `updating song for songId=${song.name}`, true);
+	if (error)
+		return { ok: false, error };
+
+	return { ok: true, value: data.data! };
+}
