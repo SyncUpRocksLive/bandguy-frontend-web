@@ -270,3 +270,24 @@ export const deleteTrack = async (songId: number, trackId: number) : Promise<Res
 
 	return { ok: true, value: undefined };
 }
+
+export const getFileVersionData = async (filesetId: number, fileVersionId: number) : Promise<Result<Blob>> => {
+	let trackUrl = `/api/legacy/user/file/${filesetId}/${fileVersionId}/data`;
+	
+	const response = await fetch(trackUrl, { 
+		method: "GET",
+		headers: { "Content-Type": "application/json" }
+	});
+
+	let error = checkHttpResponse(response, `fetching file version data for filesetId=${filesetId}, fileVersionId=${fileVersionId}`);
+	if (error)
+		return { ok: false, error };
+
+	const data = await response.blob();
+	if (!data) {
+		const errorMsg = `No data received for filesetId=${filesetId}, fileVersionId=${fileVersionId}`;
+		LogError(errorMsg);
+		return { ok: false, error: new Error(errorMsg) };
+	}
+	return { ok: true, value: data };
+}
