@@ -51,6 +51,7 @@
 			if (result.ok) {
 				track.fileSetId = result.value.filesetId;
 				track.versionNumber = result.value.versionNumber;
+				console.log('TextTrackEditor: File data uploaded successfully, updated fileset:', track.fileSetId, 'version:', track.versionNumber);
 				return true;
 			} else {
 				error = `Failed to upload file: ${result.error.message}`;
@@ -188,7 +189,7 @@
 						</tr>
 						<tr>
 							<td>Version Number</td>
-							<td>{track.versionNumber}</td>
+							<td>{track.versionNumber ?? 'latest'}</td>
 						</tr>
 						<tr>
 							<td>Created At Id</td>

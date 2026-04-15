@@ -300,7 +300,7 @@ export const getFilesetDataByVersion = async (filesetId: number, fileVersion?: n
 	return { ok: true, value: data };
 }
 
-export const uploadFilesetData = async (track: Track, fileData: Blob) : Promise<Result<{ filesetId: number; versionNumber: number }>> => {
+export const uploadFilesetData = async (track: Track, fileData: Blob) : Promise<Result<{ filesetId: number; versionNumber?: number }>> => {
 	let url = `/api/legacy/user/songs/${track.songId}/tracks/${track.id}/fileset/new`;
 	if (track.fileSetId) {
 		url += '?filesetId=' + track.fileSetId;
@@ -323,5 +323,5 @@ export const uploadFilesetData = async (track: Track, fileData: Blob) : Promise<
 	error = checkErrorResponse(data, `uploading file data for filesetId=${track.fileSetId}`, false);
 	if (error) return { ok: false, error };
 
-	return { ok: true, value: {filesetId: track.fileSetId!, versionNumber: track.versionNumber!} };
+	return { ok: true, value: {filesetId: track.fileSetId!, versionNumber: track.versionNumber} };
 }

@@ -160,6 +160,12 @@
 			song.id = result.value.id!;
 			song.name = result.value.name;
 			song.durationMilliseconds = result.value.durationMilliseconds;
+
+			// Ensure page refresh keeps us on same song if we just created it
+			if (router.route.params && router.route.params.length > 0 && router.route.params[0] === 'create') {
+				const newParam = `${song.id}`;
+				router.replace('SongLibrary', [newParam]);
+			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to update song';
 			return false;
