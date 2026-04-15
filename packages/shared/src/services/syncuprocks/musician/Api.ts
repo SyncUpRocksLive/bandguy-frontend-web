@@ -274,7 +274,7 @@ export const deleteTrack = async (songId: number, trackId: number) : Promise<Res
 export const getFilesetDataByVersion = async (filesetId: number, fileVersion?: number) : Promise<Result<Blob>> => {
 	let trackUrl = `/api/legacy/user/file/${filesetId}/data`;
 
-	if (fileVersion !== undefined) {
+	if (fileVersion !== undefined && fileVersion !== null) {
 		trackUrl += `?fileVersion=${fileVersion}`;
 	}
 	
@@ -298,4 +298,30 @@ export const getFilesetDataByVersion = async (filesetId: number, fileVersion?: n
 
 	console.log(`Successfully fetched file data for filesetId=${filesetId}, fileVersionId=${fileVersion}, size=${data.size} bytes`);
 	return { ok: true, value: data };
+}
+
+export const uploadFilesetData = async (track: Track, fileData: Blob) : Promise<Result<{ filesetId: number; versionNumber: number }>> => {
+	let url = `/api/legacy/user/songs/${track.songId}/tracks/${track.id}/fileset/new`;
+	if (track.fileSetId) {
+		url += '?filesetId=' + track.fileSetId;
+	}
+
+	// Wrap the blob in FormData
+    const formData = new FormData();
+    // The key "file" must match the parameter name in your C# method: IFormFile file
+    formData.append('file', fileData, 'upload.txt'); 
+
+    const response = await fetch(url, {
+        method: "POST",
+        body: formData 
+    });
+
+	let error = checkHttpResponse(response, `uploading file data for trackId=${track.id}, filesetId=${track.fileSetId}`);
+	if (error) return { ok: false, error };
+
+	const data: ApiResponseBase<Track> = await response.json();
+	error = checkErrorResponse(data, `uploading file data for filesetId=${track.fileSetId}`, false);
+	if (error) return { ok: false, error };
+
+	return { ok: true, value: {filesetId: track.fileSetId!, versionNumber: track.versionNumber!} };
 }

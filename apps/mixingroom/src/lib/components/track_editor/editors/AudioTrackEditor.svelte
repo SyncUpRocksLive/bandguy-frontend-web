@@ -12,6 +12,15 @@
 	let localVersionNumber = $state(track.versionNumber);
 	let useLatestVersion = $state(track.versionNumber === 0 || !track.versionNumber);
 
+	export function isStateValid(): [isValid: boolean, errorMessage: string] {
+		// TODO: Implement real validation logic based on track configuration and content
+		return [true, ''];
+	}
+
+	export function save() {
+		console.log('AudioTrackEditor: Save invoked, current track state:', track);
+	}	
+
 	function updateFilesetId(value: number | null) {
 		localFilesetId = value;
 		onchange?.({

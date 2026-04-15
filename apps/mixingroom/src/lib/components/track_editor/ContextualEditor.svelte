@@ -8,12 +8,40 @@
 		track: Track;
 		hasChanges?: boolean;
 		loading?: boolean;
-		onchange?: (track: Track) => void;
-		onsave?: () => void;
+		onchange?: (track: Track, fields: [string]) => void;
 		onrevert?: () => void;
 	}
 
-	const { track, hasChanges = false, loading = false, onchange, onsave, onrevert }: Props = $props();
+	let { 
+		track, 
+		hasChanges = $bindable(false), 
+		loading = $bindable(false), 
+		onchange, 
+		onrevert 
+	}: Props = $props();
+
+	function handleSave() {
+		if (loading || !hasChanges) {
+			return;
+		}
+
+		if (currentEditorRef) {
+			let [isValid, errorMessage] = currentEditorRef.isStateValid();
+			if (!isValid) {
+				// TODO: Replace with proper UI error display
+				console.error('ContextualEditor: Track state is invalid:', errorMessage);
+				return;
+			}
+
+			console.log('ContextualEditor: Save invoked...');
+			currentEditorRef.save();
+			hasChanges = false;
+		} else {
+			console.warn('ContextualEditor: No editor reference available to save');
+		}
+	}
+
+	let currentEditorRef: AudioTrackEditor | MetronomeTrackEditor | TextTrackEditor | null = $state(null);
 </script>
 
 <div class="contextual-editor">
@@ -37,7 +65,7 @@
 			<button
 				class="btn btn-primary"
 				disabled={!hasChanges || loading}
-				onclick={onsave}
+				onclick={handleSave}
 				title="Save changes"
 			>
 				{loading ? 'Saving...' : 'Save Track'}
@@ -48,11 +76,16 @@
 	<!-- Content Area (Format-specific editor) -->
 	<div class="editor-content">
 		{#if track.format === 'audio'}
-			<AudioTrackEditor {track} {onchange} />
+			<!-- <AudioTrackEditor {track} {onchange} /> -->
+			 <b>Unsupported format</b>
 		{:else if track.format === 'metronome'}
-			<MetronomeTrackEditor {track} {onchange} />
+			<!-- <MetronomeTrackEditor {track} {onchange} /> -->
+			 <b>Unsupported format</b>
 		{:else if track.format === 'Lyric' || track.format === 'tab' || track.format === 'Text' || track.format === 'Text,'}
-			<TextTrackEditor {track} {onchange} />
+			<TextTrackEditor 
+				bind:this={currentEditorRef}
+				{track} 
+				{onchange} />
 		{:else}
 			<div class="unsupported-format">
 				<p>Format <strong>{track.format}</strong> is not yet supported</p>

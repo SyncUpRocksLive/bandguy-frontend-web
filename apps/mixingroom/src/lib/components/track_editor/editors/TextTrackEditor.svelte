@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Track } from '@shared/services/syncuprocks/musician/Types';
-	import { getFilesetDataByVersion } from '@shared/services/syncuprocks/musician/Api';
+	import { getFilesetDataByVersion, uploadFilesetData } from '@shared/services/syncuprocks/musician/Api';
 	import { untrack } from 'svelte';
 
 	interface Props {
 		track: Track;
-		onchange?: (track: Track) => void;
+		onchange?: (track: Track, fields: [string]) => void;
 	}
 
 	const { track, onchange }: Props = $props();
@@ -14,6 +14,54 @@
 	let textContent = $state('');
 	let isLoading = $state(false);
 	let error = $state<string | null>(null);
+
+	export function isStateValid(): [isValid: boolean, errorMessage: string] {
+		// TODO: Implement real validation logic based on track configuration and content
+		const data = textContent.trim();
+		if (data === '') {
+			return [false, 'Content cannot be empty'];
+		}
+
+		if (data.length > 10000) {
+			return [false, 'Content is too long (max 10,000 characters)'];
+		}
+
+		const lines = data.split('\n');
+		if (lines.length > 200) {
+			return [false, 'Content has too many lines (max 200)'];
+		}
+
+		// TODO: Add format-specific validation (e.g. for lyrics, check for [Verse], [Chorus] sections; for tablature, check for valid string indicators)
+		if(lines.some(line => !line.startsWith("["))) {
+			return [false, 'One or more lines do not start with a bracket'];
+		}
+
+		return [true, 'Valid'];
+	}
+		
+	export async function save() {
+		console.log('TextTrackEditor: Save invoked, current track state:', track);
+
+		isLoading = true;
+		error = null;
+
+		try {
+			const result = await uploadFilesetData(track, new Blob([textContent], { type: 'text/plain' }));
+
+			if (result.ok) {
+				track.fileSetId = result.value.filesetId;
+				track.versionNumber = result.value.versionNumber;
+				return true;
+			} else {
+				error = `Failed to upload file: ${result.error.message}`;
+			}
+		} catch (err) {
+			error = `Error uploading file data: ${err instanceof Error ? err.message : 'Unknown error'}`;
+			return false;
+		} finally {
+			isLoading = false;
+		}
+	}
 
 	// Load file data if fileSetId is available
 	async function loadFileData(track: Track) {
@@ -65,11 +113,9 @@
 
 	function handleInput(e: Event & { currentTarget: HTMLTextAreaElement }) {
 		const val = e.currentTarget.value;
-
 		console.log('Text content changed: ', val.length);
-		
 		textContent = val;
-		//updateConfig();
+		onchange?.(track, ['text']);
 	}
 
 	function updateConfig() {
@@ -101,7 +147,7 @@
 		</div>
 	{:else}
 		<div class="editor-section">
-			<h4>{track.format === 'lyric' ? 'Lyrics' : 'Tablature'}</h4>
+			<h4>{track.format === 'lyric' ? 'Lyrics' : 'Tablature'}</h4> <!-- TODO: Add RealTime Validation display-->
 
 			<div class="form-group">
 				<label for="text-area">Content</label>

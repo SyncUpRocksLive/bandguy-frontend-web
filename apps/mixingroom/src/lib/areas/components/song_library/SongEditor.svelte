@@ -62,25 +62,6 @@
 		}
 	}
 
-	// Handle saving a track
-	async function handleSaveTrack(track: Track) {
-		loading = true;
-		error = null;
-		try {
-			const result = await saveTrack(songId!, track);
-			if (!result.ok) {
-				error = result.error.message;
-				return;
-			}
-
-			tracks = tracks.map((t) => (t.id === track.id ? result.value : t));
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to save track';
-		} finally {
-			loading = false;
-		}
-	}
-
 	// Handle deleting a track
 	async function handleDeleteTrack(trackId: number) {
 		if (!song || song.id <= 0 || !trackId || trackId <= 0) {
@@ -221,7 +202,6 @@
 			bind:tracks
 			bind:loading
 			bind:error
-			onsave={handleSaveTrack}
 			ondelete={handleDeleteTrack}
 			oncreatetrack={handleCreateTrack}
 		/>

@@ -8,16 +8,14 @@
 		tracks?: Track[];
 		loading?: boolean;
 		error?: string | null;
-		onsave?: (track: Track) => void;
 		ondelete?: (trackId: number) => void;
 		oncreatetrack?: (track: Omit<Track, 'songId' | 'fileSetId' | 'id' | 'createdAtMsUtc'>) => void;
 	}
 
-	const {
+	let {
 		tracks = $bindable([]),
 		loading = $bindable(false),
 		error = $bindable(null),
-		onsave,
 		ondelete,
 		oncreatetrack
 	}: Props = $props();
@@ -39,20 +37,11 @@
 		hasChanges = false;
 	}
 
-	function handleTrackChange(updatedTrack: Track) {
+	function handleTrackChange(track: Track, fields: [string]) {
 		if (selectedTrack) {
-			console.log('TrackEditor: Track updated:', updatedTrack);
-			selectedTrack = updatedTrack;
+			console.log('TrackEditor: Track updated: id', track.id, fields);
+			
 			hasChanges = true;
-		}
-	}
-
-	function handleSave() {
-		if (selectedTrack && onsave) {
-			console.log('TrackEditor: Saving track:', selectedTrack);
-			onsave(selectedTrack);
-			originalTrack = JSON.parse(JSON.stringify(selectedTrack));
-			hasChanges = false;
 		}
 	}
 
@@ -83,6 +72,8 @@
 		oncreatetrack?.(newTrack);
 		showAddTrackModal = false;
 	}
+
+	let contextualEditorRef: ContextualEditor | null = $state(null);
 </script>
 
 <div class="track-editor">
@@ -106,10 +97,9 @@
 		{#if selectedTrack}
 			<ContextualEditor
 				track={selectedTrack}
-				{hasChanges}
-				{loading}
+				bind:hasChanges={hasChanges}
+				bind:loading={loading}
 				onchange={handleTrackChange}
-				onsave={handleSave}
 				onrevert={handleRevert}
 			/>
 		{:else}

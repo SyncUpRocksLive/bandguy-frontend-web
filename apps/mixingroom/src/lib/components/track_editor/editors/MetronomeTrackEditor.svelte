@@ -15,6 +15,15 @@
 	let isTapping = $state(false);
 	let lastTapTime = 0;
 
+	export function isStateValid(): [isValid: boolean, errorMessage: string] {
+		// TODO: Implement real validation logic based on track configuration and content
+		return [true, ''];
+	}
+	
+	export function save() {
+		console.log('MetronomeTrackEditor: Save invoked, current track state:', track);
+	}
+
 	function updateConfig() {
 		const newConfig = {
 			bpm,
