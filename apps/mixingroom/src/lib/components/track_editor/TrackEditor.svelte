@@ -30,7 +30,8 @@
 	function selectTrack(track: Track) {
 		if (hasChanges && selectedTrack) {
 			const confirmed = confirm('You have unsaved changes. Do you want to discard them?');
-			if (!confirmed) return;
+			if (!confirmed) 
+				return;
 		}
 
 		selectedTrack = track;
@@ -40,6 +41,7 @@
 
 	function handleTrackChange(updatedTrack: Track) {
 		if (selectedTrack) {
+			console.log('TrackEditor: Track updated:', updatedTrack);
 			selectedTrack = updatedTrack;
 			hasChanges = true;
 		}
@@ -47,6 +49,7 @@
 
 	function handleSave() {
 		if (selectedTrack && onsave) {
+			console.log('TrackEditor: Saving track:', selectedTrack);
 			onsave(selectedTrack);
 			originalTrack = JSON.parse(JSON.stringify(selectedTrack));
 			hasChanges = false;

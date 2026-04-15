@@ -34,12 +34,6 @@
 				searchable: true
 			},
 			{
-				key: 'tracks',
-				header: 'Tracks',
-				width: '0.55fr',
-				display: (song) => (song.tracks ?? 0).toString()
-			},
-			{
 				key: 'duration',
 				header: 'Duration',
 				width: '0.75fr',

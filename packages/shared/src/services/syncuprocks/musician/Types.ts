@@ -38,7 +38,7 @@ export interface Track {
 	type: TrackType;
 	format: TrackFormat;
 	createdAtMsUtc: number;
-	versionNumber: number;
+	versionNumber?: number;
 	configuration?: string;
 }
 

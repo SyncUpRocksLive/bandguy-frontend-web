@@ -4,6 +4,8 @@
 	import { msToHMS } from '@shared/display/DisplayHelpers';
 	import { getSongComplete, saveTrack, deleteTrack, createTrack, type SongSaveRequest, songSave } from '@shared/services/syncuprocks/musician/Api';
 	import type { Song, Track } from '@shared/services/syncuprocks/musician/Types';
+	import { untrack } from 'svelte';
+	import { router } from '@/Router.svelte';
 
 	interface Props {
 		songId?: number;
@@ -190,7 +192,10 @@
 
 	// Load song on mount
 	$effect(() => {
-		loadSong();
+		untrack(() => {
+			console.log('SongEditor mounted, loading song with ID:', songId);
+			loadSong();
+		});
 	});
 </script>
 
@@ -207,7 +212,7 @@
 		</div>
 		<div class="header-actions">
 			<!-- Future: Add global save, publish, etc. -->
-			 Psdsd
+			<button class="edit-btn" onclick={() => { router.back('SongLibrary') }} aria-label="Edit song">X</button>
 		</div>
 	</header>
 
