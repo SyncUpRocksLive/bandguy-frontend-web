@@ -1,7 +1,7 @@
 import { BroadcastMessage } from "@/Support/Stores/MessageBus";
 import { dispatch } from "@/Support/Stores/PrimaryStore";
 import { ActionType, StoreItems } from "@/Support/Stores/Types";
-import { LogError, LogInfo } from "@/Support/Utilities/Logger";
+import { LogError, LogInfo } from "@shared/services/Logger";
 import { Client, ConnectState } from "@/Types/Client";
 import { JProtocolAction, JProtocolMessage } from "@/Types/JProtocol/Types";
 import { MessageBusActionType } from "@/Types/MessageBus";

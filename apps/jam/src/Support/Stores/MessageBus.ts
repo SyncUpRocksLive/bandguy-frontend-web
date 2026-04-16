@@ -1,5 +1,5 @@
 import { MessageBusEvent } from "@/Types/MessageBus";
-import { Log, LogError } from "../Utilities/Logger";
+import { Log, LogError } from "@shared/services/Logger";
 
 export interface IMessageBusHandler {
 	messageBusEvent:(event: MessageBusEvent) => void;

@@ -1,13 +1,13 @@
 import { SongOverview, Track, TrackFormat } from "@shared/services/syncuprocks/musician/Types";
 import { useEffect, useRef, useState } from "react";
 import { getSongStore } from "@/Support/Stores/SongStore";
-import { LogError } from "@/Support/Utilities/Logger";
-import { lyricsParser } from "@/Support/Utilities/LyricsFileParser";
-import { Lyric } from "@/Types/Lyrics";
+import { LogError } from "@shared/services/Logger";
+import { lyricsParser } from "@shared/parsers/lyrics/LyricsFileParser";
+import { Lyric } from "@shared/parsers/lyrics/Lyrics";
 import BasicLyricViewer from "@/Components/Viewer/BasicLyricViewer";
 import { pickStore } from "@/Support/Stores/PrimaryStore";
 import { PeerOperationMode, SongPlayStatus } from "@/Support/Stores/Types";
-import { msToHMS } from "@/Support/Utilities/DisplayHelpers";
+import { msToHMS } from "@shared/display/DisplayHelpers";
 import { BroadcastMessage, IMessageBusHandler, RemoveMessageHandler, SubscribeMessageHandler } from "@/Support/Stores/MessageBus";
 import { MessageBusActionType, MessageBusEvent } from "@/Types/MessageBus";
 import { Metronome } from "@/Components/Viewer/Metronome";

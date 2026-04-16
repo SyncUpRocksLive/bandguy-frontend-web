@@ -1,5 +1,5 @@
 import { TrackFormat } from "@shared/services/syncuprocks/musician/Types";
-import { Log, LogError, LogInfo } from "../Utilities/Logger";
+import { Log, LogError, LogInfo } from "@shared/services/Logger";
 
 export interface SongBlob {
 	songId: number;

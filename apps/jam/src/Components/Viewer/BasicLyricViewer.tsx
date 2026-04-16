@@ -1,4 +1,4 @@
-import { Line, Lyric, LyricFormatVersion } from "@/Types/Lyrics";
+import { Line, Lyric, LyricFormatVersion } from "@shared/parsers/lyrics/Lyrics";
 import { useEffect, useRef, useState } from "react";
 
 interface IProps {

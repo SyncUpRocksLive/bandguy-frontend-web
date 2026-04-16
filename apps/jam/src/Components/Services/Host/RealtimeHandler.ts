@@ -1,4 +1,4 @@
-import { LogInfo } from "@/Support/Utilities/Logger";
+import { LogInfo } from "@shared/services/Logger";
 import { Client } from "@/Types/Client";
 
 export function deleteClientRealtimChannel(client: Client) {

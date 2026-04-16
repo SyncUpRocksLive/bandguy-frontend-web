@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { Log } from '@/Support/Utilities/Logger';
-import { JamChannels } from "@/Support/Services/JamChannels";
+import { Log } from '@shared/services/Logger';
+import { JamChannels } from "@shared/services/syncuprocks/musician/JamChannels";
 import { getStore } from '@/Support/Stores/PrimaryStore';
 import { IHostConnectionFlow, ServerFlow } from "./ServerFlow";
 

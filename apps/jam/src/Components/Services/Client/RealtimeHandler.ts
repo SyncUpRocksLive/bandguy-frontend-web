@@ -1,5 +1,5 @@
 import { BroadcastMessage } from "@/Support/Stores/MessageBus";
-import { LogError, LogInfo } from "@/Support/Utilities/Logger";
+import { LogError, LogInfo } from "@shared/services/Logger";
 import { Client } from "@/Types/Client";
 import { RProtocolAction, RProtocolMessageType } from "@/Types/JProtocol/Types";
 import { MessageBusActionType } from "@/Types/MessageBus";

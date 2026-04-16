@@ -3,7 +3,7 @@ import { dispatch, pickStore } from '@/Support/Stores/PrimaryStore';
 import TopNavBar from '@/Components/Header/TopNavBar';
 import LoginForm from '@/Components/Login/Login';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
-import { Log, LogVerbose } from '@/Support/Utilities/Logger';
+import { Log, LogVerbose } from '@shared/services/Logger';
 import BandLeaderService from '@/Components/Services/Host/BandLeader';
 import MessageChannelService from '@/Components/Services/MessageChannelService';
 import { useQuery } from '@tanstack/react-query';

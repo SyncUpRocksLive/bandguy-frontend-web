@@ -2,7 +2,7 @@ import { useState } from 'react'
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
-import { GetGeneraSettings, SaveGeneralSettings, SettingType } from '@/Support/Utilities/Settings';
+import { GetGeneraSettings, SaveGeneralSettings, SettingType } from '@shared/services/Settings';
 
 const GeneralTab = () => {
 	const [settings, setSettings] = useState(GetGeneraSettings);

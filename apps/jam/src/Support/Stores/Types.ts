@@ -1,5 +1,5 @@
 import { Client } from "@/Types/Client";
-import { JamChannelDetail } from "../Services/JamChannels";
+import { JamChannelDetail } from "@shared/services/syncuprocks/musician/JamChannels";
 
 export interface UserState {
 	displayName: string;

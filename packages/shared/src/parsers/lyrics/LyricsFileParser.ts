@@ -1,5 +1,5 @@
-import { Lyric, Line, Word, LyricFormatVersion } from '../../Types/Lyrics';
-import { Log, LogError, LogObject } from './Logger';
+import { Lyric, Line, Word, LyricFormatVersion } from './Lyrics';
+import { Log, LogError, LogObject } from '@shared/services/Logger';
 
 function parseLegacy(lyric: Lyric, lyricLine: string, timePositions:number[]) {
 	lyricLine = lyricLine.trim();

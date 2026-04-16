@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap"
 import { useNavigate } from "react-router"
 import { dispatch, pickStore } from '@/Support/Stores/PrimaryStore';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
-import { Log, LogError } from "@/Support/Utilities/Logger";
+import { Log, LogError } from "@shared/services/Logger";
 import { getSongStore } from '@/Support/Stores/SongStore';
 
 const Home = () => {

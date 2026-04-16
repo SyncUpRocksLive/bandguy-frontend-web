@@ -1,7 +1,7 @@
 import { getStore } from '@/Support/Stores/PrimaryStore';
 import { useQuery } from '@tanstack/react-query';
-import { LogError, LogInfo } from '@/Support/Utilities/Logger';
-import { Messages } from '@/Support/Services/MessageQueue';
+import { LogError, LogInfo } from '@shared/services/Logger';
+import { Messages } from '@shared/services/syncuprocks/musician/MessageQueue';
 import { PeerOperationMode } from "@/Support/Stores/Types";
 import { MessageBusActionType } from '@/Types/MessageBus';
 import { BroadcastMessage } from '@/Support/Stores/MessageBus';

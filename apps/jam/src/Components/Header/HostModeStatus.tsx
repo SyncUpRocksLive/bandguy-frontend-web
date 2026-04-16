@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConnectedUser } from '@/Support/Stores/Types';
 import { BroadcastMessage } from '@/Support/Stores/MessageBus';
 import { MessageBusActionType } from '@/Types/MessageBus';
-import { LogInfo } from '@/Support/Utilities/Logger';
+import { LogInfo } from '@shared/services/Logger';
 
 const HostModeStatus = () => {
 	const { user, connectedUsers } = pickStore<'user'|'connectedUsers'>();

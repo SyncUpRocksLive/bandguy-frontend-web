@@ -1,6 +1,6 @@
 import { StoreItems } from "@/Support/Stores/Types";
 import { Client } from "./Client";
-import { Message } from "./Message";
+import { Message } from "@shared/services/syncuprocks/musician/MessageTypes";
 
 export enum MessageBusActionType {
 	MESSAGE = 'MESSAGE',

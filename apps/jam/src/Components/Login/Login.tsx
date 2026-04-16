@@ -1,4 +1,4 @@
-import { LogInfo } from '@/Support/Utilities/Logger';
+import { LogInfo } from '@shared/services/Logger';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 

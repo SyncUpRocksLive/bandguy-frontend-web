@@ -1,10 +1,10 @@
-import { JamChannelDetail } from "@/Support/Services/JamChannels";
-import { Messages } from "@/Support/Services/MessageQueue";
+import { JamChannelDetail } from "@shared/services/syncuprocks/musician/JamChannels";
+import { Messages } from "@shared/services/syncuprocks/musician/MessageQueue";
 import { IMessageBusHandler, RemoveMessageHandler, SubscribeMessageHandler } from "@/Support/Stores/MessageBus";
 import { dispatch, getStore } from "@/Support/Stores/PrimaryStore";
-import { LogError, LogInfo } from "@/Support/Utilities/Logger";
+import { LogError, LogInfo } from "@shared/services/Logger";
 import { ConnectState } from "@/Types/Client";
-import { MessageDataType } from "@/Types/Message";
+import { MessageDataType } from "@shared/services/syncuprocks/musician/MessageTypes";
 import { MessageBusActionType, MessageBusEvent } from "@/Types/MessageBus";
 import { createGuestSignallingChannel, deleteGuestSignallingChannel } from "./SignalChannelHandler";
 import { ActionType, ConnectedUser } from "@/Support/Stores/Types";

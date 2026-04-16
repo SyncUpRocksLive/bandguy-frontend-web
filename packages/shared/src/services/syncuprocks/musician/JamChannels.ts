@@ -1,5 +1,5 @@
-import { ApiResponseBase } from "@/Components/SetList/Types";
-import { LogObject, LogVerbose } from "../Utilities/Logger";
+import { ApiResponseBase } from "@shared/services/syncuprocks/Types";
+import { LogObject, LogVerbose } from "@shared/services/Logger";
 
 export interface JamChannelDetail {
 	hostUser: string;

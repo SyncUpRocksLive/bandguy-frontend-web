@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { LogError, LogInfo } from '@/Support/Utilities/Logger';
+import { LogError, LogInfo } from "@shared/services/Logger"
 import { dispatch, pickStore } from '@/Support/Stores/PrimaryStore';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useQuery } from "@tanstack/react-query";
-import { JamChannels } from "@/Support/Services/JamChannels";
+import { JamChannels } from "@shared/services/syncuprocks/musician/JamChannels";
 import { ActionType, PeerOperationMode } from "@/Support/Stores/Types";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

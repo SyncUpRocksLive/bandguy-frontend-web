@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
-import { lyricsParser, parseTime } from '../../src/Support/Utilities/LricsFileParser';
-import { LyricFormatVersion } from '../../src/Types/Lyrics';
+import { lyricsParser, parseTime } from '@shared/parsers/lyrics/LyricsFileParser';
+import { LyricFormatVersion } from '@shared/parsers/lyrics/Lyrics';
 
 test('Basic Error Handling', () => {
 	expect(() => lyricsParser('')).toThrowError('Empty LRC Data');

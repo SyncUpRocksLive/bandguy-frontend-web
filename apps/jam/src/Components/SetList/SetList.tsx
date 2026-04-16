@@ -1,6 +1,6 @@
 import { PlayIcon } from '@/Constants/AppIcons';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
-import { Log } from '@/Support/Utilities/Logger';
+import { Log } from '@shared/services/Logger';
 import { SetOverview } from '@shared/services/syncuprocks/musician/Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
@@ -8,7 +8,7 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { dispatch, pickStore } from '@/Support/Stores/PrimaryStore';
-import { ApiResponseBase } from './Types';
+import { ApiResponseBase } from '@shared/services/syncuprocks/Types';
 
 interface IProp {
 	mode: PeerOperationMode

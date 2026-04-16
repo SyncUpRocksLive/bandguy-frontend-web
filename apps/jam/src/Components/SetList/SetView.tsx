@@ -1,7 +1,7 @@
 import { PlayIcon, PauseIcon, SkipIcon } from "@/Constants/AppIcons";
 import { dispatch, pickStore } from "@/Support/Stores/PrimaryStore";
 import { ActionType, PeerOperationMode, SongPlayStatus } from "@/Support/Stores/Types";
-import { Log, LogError, LogInfo, LogVerbose } from "@/Support/Utilities/Logger";
+import { Log, LogError, LogInfo, LogVerbose } from "@shared/services/Logger";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";

@@ -1,7 +1,7 @@
-import { ApiResponseBase } from '@/Components/SetList/Types';
-import { Message, MessageData } from '@/Types/Message';
+import { ApiResponseBase } from '@shared/services/syncuprocks/Types';
+import { Message, MessageData } from './MessageTypes';
 import { getUnixTime } from 'date-fns'
-import { LogError, LogInfo, LogObject } from '../Utilities/Logger';
+import { LogError, LogInfo, LogObject } from '@shared/services/Logger';
 
 export class Messages {
 	static async getMessages() {

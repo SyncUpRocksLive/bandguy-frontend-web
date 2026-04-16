@@ -1,4 +1,4 @@
-import { Log, LogVerbose } from "@/Support/Utilities/Logger";
+import { Log, LogVerbose } from "@shared/services/Logger";
 import { ActionType, PeerOperationMode, StoreActions, StoreItems } from "./Types";
 import { BroadcastMessage } from "./MessageBus";
 import { MessageBusActionType } from "@/Types/MessageBus";
