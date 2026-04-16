@@ -1,20 +1,36 @@
 <script lang="ts">
-  import Upload from "./lib/Upload.svelte";
+	// Main mixing room components will be added here
+	import Header from "./lib/Header.svelte";
+	import { appState } from "./State.svelte";
+	import { auth } from "./Auth.svelte";
+	import Login from "./lib/areas/components/login/Login.svelte";
+	import { router } from "./Router.svelte";
 </script>
 
-<section id="header">
-  <a href="/">Home</a> | <a href="/mixingroom">Mixing Room</a> | <a href="/jam">Jam</a>
-  <p>Upload your playlist and let the magic happen!</p>
-</section>
+<Header />
 
-<section id="center">
-  <div>
-    <h3>In Work - Stay Tuned</h3>
-    <p>Get Started - Upload Your Playlist</p>
-  </div>
-  <Upload />
-</section>
+{#if auth.isAuthenticated}
+	{#await import(`./lib/areas/${router.route.area}.svelte`)}
+		<!-- only show loading spinner if taking > 4 secs... -->
+	{:then module}
+		<svelte:component this={module.default} params={router.route.params} />
+	{:catch}
+		<p>Could not load view {router.route.area}</p>
+		<button onclick={() => router.navigate("Home")}>Go Home</button>
+	{/await}
+{:else}
+	<Login />
+{/if}
 
-<div class="ticks"></div>
-<div class="ticks"></div>
-<section id="spacer"></section>
+<footer id="spacer"></footer>
+
+<style>
+	:global(body) {
+		margin: 0;
+		padding: 0;
+	}
+
+	footer {
+		grid-area: spacer;
+	}
+</style>

@@ -1,5 +1,4 @@
-import { SongOverview } from "@/Types/Sets/SetOverview";
-import { SongTrack, TrackFormat } from "@/Types/Sets/SongDetail";
+import { SongOverview, Track, TrackFormat } from "@shared/services/syncuprocks/musician/Types";
 import { useEffect, useRef, useState } from "react";
 import { getSongStore } from "@/Support/Stores/SongStore";
 import { LogError } from "@/Support/Utilities/Logger";
@@ -15,7 +14,7 @@ import { Metronome } from "@/Components/Viewer/Metronome";
 
 interface IProps {
 	song: SongOverview;
-	tracks: SongTrack[];
+	tracks: Track[];
 }
 
 type LoadedTrackDataType =
@@ -165,7 +164,7 @@ const SongView = ({song, tracks}: IProps) => {
 		}
 	}, [song, tracks]);
 
-	const trackElement = (track: SongTrack) => {
+	const trackElement = (track: Track) => {
 		if (track.format === TrackFormat.Lyric) {
 			const data = loadedData.find((l) => l.id === `${song.id}-${track.id}`);
 			if (!data) {
@@ -190,7 +189,7 @@ const SongView = ({song, tracks}: IProps) => {
 		{tracks.map((t) => {
 			return (
 			<div key={t.id} style={{background: 'black', margin: '4px'}}>
-				Track {t.id}, {t.description}, {t.type}, {t.format}
+				Track {t.id}, {t.name}, {t.type}, {t.format}
 				{trackElement(t)}
 			</div>)
 		})}

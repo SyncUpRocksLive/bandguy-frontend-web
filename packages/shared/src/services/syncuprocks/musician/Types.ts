@@ -1,4 +1,22 @@
 
+export interface SongOverview {
+	id: number;	// Globally unique id of song
+	name: string;
+	setOrder: number;
+    tracks?: number,
+	createdAtMsUtc?: number;
+	durationMs?: number,
+	configuration?: string
+}
+
+export interface SetOverview {
+	musicianId: number;
+	id: number;
+	name: string;
+	createdAtMsUtc: number;
+	songs: SongOverview[];
+}
+
 export enum TrackType {
 	Guitar = 'Guitar',
 	Vocals = 'Vocals',
@@ -15,12 +33,12 @@ export enum TrackFormat {
 export interface Track {
 	id: number;
 	songId: number;
-	fileSetId: number;
-	name: TrackType;
+	fileSetId?: number;
+	name: string;
 	type: TrackType;
 	format: TrackFormat;
 	createdAtMsUtc: number;
-	versionNumber: number;
+	versionNumber?: number;
 	configuration?: string;
 }
 
@@ -38,7 +56,7 @@ export interface Song {
 export interface SetComplete {
 	musicianId: number;
 	id: number;
-	Name: string;
+	name: string;
 	createdAtMsUtc: number;
 	songs: Song[];
 }

@@ -1,7 +1,7 @@
 import { PlayIcon } from '@/Constants/AppIcons';
 import { ActionType, PeerOperationMode } from '@/Support/Stores/Types';
 import { Log } from '@/Support/Utilities/Logger';
-import { SetOverview } from '@/Types/Sets/SetOverview';
+import { SetOverview } from '@shared/services/syncuprocks/musician/Types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from 'react-bootstrap';

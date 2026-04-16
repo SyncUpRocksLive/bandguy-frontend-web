@@ -1,66 +1,104 @@
-BandGuy helps bands rehearse together online with synchronized playback of lyrics and tracks. 
-This repository contains the React frontend SPA. This repo is configured as a monorepo:
+# BandGuy Frontend
 
-- Main Vite Server is 'static', listening on 0.0.0.0:9000 
-  - serving up static data from public/
-  - It will proxy to the jam/ SPA app port (/jam is listening to port 5173)
-  - each sub spa will handle some portion of the over site experience. Looking to not have a single SPA running tons of components, modules, and state. Additional, SPAs are free to choose their own stack (react, vue, svelte, vanilla js)  
+BandGuy helps bands rehearse together online with synchronized playback of lyrics, tracks, and live jam sessions.
 
-## Features (Proof-of-Concept)
-- React SPA for local rehearsal sessions
-- Browser-based lyric file caching
-- Two track playback types
-- WebRTC-based network sync
+This repository contains the frontend monorepo for the web client. It is designed so each major app area can be developed and deployed independently while sharing common packages and static assets.
 
-## Repo Structure
-- `/apps` – Each subfolder is a SPA of its own. Instead of one massive SPA, hard to deploy, edit, and large memory/download footprint - break major app areas into their own SPAs. For instance, user profile editing has nothing at all to do with jamming. And, we can unload jam SPA when going to edit user profile, or in track builder modes.
-- `/public` – Static assets
-- `/tests` – Component/unit tests
-- `.storybook` – Storybook UI component explorer
-- `vite.config.ts` – Vite build configuration
+## What’s in this repo
 
-## Running Locally
+- `apps/jam` — React/Vite SPA for live rehearsal sessions and lyrics playback
+- `apps/mixingroom` — Svelte/Vite mixing room prototype
+- `packages/shared` — shared source code and utilities
+- `public` — root static assets served by the main Vite server
+- `tests` — unit/component tests
+- `storybook-static` — built Storybook output
+- `vite.config.ts` — root Vite dev server and proxy configuration
 
-### Tools
-- VSCode
-- .Net 10 (Visual Studio or dotnet build/run)
-- npm v24
-- docker compose
+## Features
 
-1. Clone the repo:
-   - git clone https://github.com/SyncRock/bandguy-frontend-react.git
-   - git clone https://github.com/SyncRock/bandguy-api-server.git
-2. Install dependencies:
-   - npm run install-all
-3. Start local dev server + WebRTC stub:
-   - npm run dev-jam
-4. in bandguy-api-server/docker
-   - docker compose up
-5. build and run the .Net bandguy-api-server/backend
-6. setup a fake host/static in host file: syncup.local 127.0.0.1
-7. Open the app in your browser at http://syncup.local:7080/
+- React-based jam SPA for local rehearsal flows
+- Browser-side lyric caching
+- Two track playback modes
+- WebRTC-based session synchronization
+- Separate SPA workspaces for lower runtime complexity
 
-## Tests
-- Run unit/component tests:
-  npm run test
-- Run Storybook:
-  npm run storybook
+## Requirements
+
+- Node.js 24+
+- npm 10+
+- Docker + Docker Compose
+- .NET 10 SDK for the backend if running locally from source
+- Hosts file entry: `127.0.0.1 syncup.local`
+
+## Setup
+
+1. Clone this repository and the backend repo:
+   - `git clone https://github.com/SyncUpRocksLive/bandguy-frontend-web.git`
+   - `git clone https://github.com/SyncUpRocksLive/bandguy-api-server.git`
+2. Install dependencies from the root:
+   - `npm run install-all`
+3. Start the backend stack:
+   - `cd bandguy-api-server/docker`
+   - `docker compose up`
+4. Start the frontend jam app:
+   - `npm run dev-jam`
+5. Open the app in your browser:
+   - `http://syncup.local:7080/`
+
+## Local architecture
+
+The root Vite dev server runs on `port 9000` and serves static content from `public/`.
+It proxies requests to active SPA workspaces:
+
+- `/jam` → `http://localhost:5173`
+- `/mixingroom` → `http://localhost:5174`
+- `/api` → `http://localhost:9001`
+
+This lets the frontend and backend share the same host/domain in local development.
+
+## Available commands
+
+From the repo root:
+
+- `npm run install-all` — install root and workspace dependencies
+- `npm run dev-jam` — start the root static server and `apps/jam` dev server
+- `npm run dev-static` — start only the root static server
+- `npm run build --workspaces` — build all workspace packages
+
+From `apps/jam` workspace:
+
+- `npm run dev --workspace=apps/jam` — run jam app dev server
+- `npm run storybook --workspace=apps/jam` — start Storybook
+- `npm run build-storybook --workspace=apps/jam` — build Storybook
+- `npm run test --workspace=apps/jam` — run the jam workspace tests
+
+From `apps/mixingroom` workspace:
+
+- `npm run dev --workspace=apps/mixingroom` — run mixing room dev server
+
+## Notes
+
+- `apps/jam` is the main React application
+- `apps/mixingroom` is a Svelte prototype app
+- `apps/profile` is currently a placeholder workspace
+- Root Vite proxies `/jam` and `/mixingroom`, while `/api` is forwarded to the backend service
+
+## Troubleshooting
+
+- Confirm `docker compose up` is running in `bandguy-api-server/docker`
+- Confirm `syncup.local` maps to `127.0.0.1`
+- Use `npm run install-all` after changing workspace dependencies
 
 ## Contributing
+
 - Keep experiments in separate branches
-- Storybook components should be documented with examples
+- Document Storybook stories in `apps/jam/src/stories`
+- Keep frontend changes aligned with the backend API contract in `bandguy-api-server`
 
-## Commnuity
+## Related repos
 
-[![Discord](https://img.shields.io/badge/Discord-Join%20the%20Jam%20%F0%9F%8E%B6-%235865F2.svg)](https://discord.gg/YTxrm3M93A)
-
-
-[![YouTube](https://img.shields.io/badge/YouTube-Follow%20SyncRock-%23FF0000?style=flat&logo=youtube&logoColor=white)](https://www.youtube.com/@SyncUpRocksLive)
-
+- Backend API server: `https://github.com/SyncUpRocksLive/bandguy-api-server`
 
 ## License
-GPL-3.0 License — see LICENSE file for details.
 
-## Architecture Diagram
-
-![BandGuy Frontend Architecture](assets/flow.png)
+GPL-3.0 License — see the `LICENSE` file for details.

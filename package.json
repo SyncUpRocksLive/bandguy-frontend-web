@@ -1,0 +1,44 @@
+{
+  "name": "syncup-rocks-monorepo",
+  "private": true,
+  "engines": {
+    "node": "^24.14.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev-all": "concurrently -n \"LANDING,JAM\" -c \"magenta,yellow,cyan,blue\" \"vite\" \"npm run dev --workspace=apps/jam\" \"npm run dev --workspace=apps/mixingroom\"",
+    "build": "npm run build --workspaces",
+    "install-all": "npm install && npm install --workspaces"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.2.0",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/react-fontawesome": "^3.2.0",
+    "bootstrap": "^5.3.8",
+    "date-fns": "^4.1.0",
+    "react-superstore": "github:pjcast/react-superstore#react-19.2.4"
+  },
+  "devDependencies": {
+    "@storybook/addon-onboarding": "10.3.4",
+    "@storybook/react": "10.3.4",
+    "@storybook/react-vite": "10.3.4",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.1.0",
+    "eslint-plugin-compat": "^7.0.1",
+    "eslint-plugin-storybook": "^10.3.4",
+    "storybook": "10.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.3",
+    "vitest": "^4.1.0"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.5",
+    "lodash": "4.18.1",
+    "picomatch": "4.0.4"
+  }
+}
