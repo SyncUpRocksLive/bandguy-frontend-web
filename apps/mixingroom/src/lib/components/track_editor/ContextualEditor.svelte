@@ -13,7 +13,7 @@
 	}
 
 	let { 
-		track, 
+		track = $bindable(), 
 		hasChanges = $bindable(false), 
 		loading = $bindable(false), 
 		onchange, 
@@ -84,7 +84,7 @@
 		{:else if track.format === 'Lyric' || track.format === 'tab' || track.format === 'Text' || track.format === 'Text,'}
 			<TextTrackEditor 
 				bind:this={currentEditorRef}
-				{track} 
+				bind:track={track} 
 				{onchange} />
 		{:else}
 			<div class="unsupported-format">

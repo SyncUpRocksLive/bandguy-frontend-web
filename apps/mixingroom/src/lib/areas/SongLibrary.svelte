@@ -66,34 +66,34 @@
 
 	// Reactive statement to fetch songs when user changes
 	$: if (auth.user?.userId) {
-		console.log('Auth user changed, fetching songs for userId:', auth.user.userId);
+		console.log('SongLibrary::fetchSongs() Auth user changed, fetching songs for userId:', auth.user.userId);
 		fetchSongs();
 	} else {
-		console.log('No auth user or userId, auth.user:', auth.user);
+		console.log('SongLibrary::fetchSongs() No auth user or userId, auth.user:', auth.user);
 	}
 
 	async function fetchSongs() {
 		if (!auth.user?.userId) {
-			console.log('fetchSongs called but no userId');
+			console.log('SongLibrary::fetchSongs() fetchSongs called but no userId');
 			return;
 		}
 
-		console.log('fetchSongs called with userId:', auth.user.userId);
+		console.log('SongLibrary::fetchSongs() fetchSongs called with userId:', auth.user.userId);
 		loading = true;
 		error = null;
 		try {
 			const result = await getSongsOverview(auth.user.userId);
-			console.log('getSongsOverview result:', result);
+			console.log('SongLibrary::fetchSongs() getSongsOverview result:', result);
 			if (result.ok) {
 				songs = result.value.sort((a, b) => a.name.localeCompare(b.name));
-				console.log('Songs loaded:', songs.length);
+				console.log('SongLibrary::fetchSongs() Songs loaded:', songs.length);
 			} else {
 				error = result.error.message;
-				console.error('Error loading songs:', error);
+				console.error('SongLibrary::fetchSongs() Error loading songs:', error);
 			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Unknown error';
-			console.error('Exception in fetchSongs:', err);
+			console.error('SongLibrary::fetchSongs() Exception in fetchSongs:', err);
 		} finally {
 			loading = false;
 		}
@@ -146,7 +146,6 @@
 <div class="setlist-library">
 
 	{#if router.route.params && router.route.params.length > 0}
-		<!-- <TrackEditor /> -->
 		<SongEditor 
 			songId={Number.isInteger(+router.route.params[0]) ? parseInt(router.route.params[0], 10) : undefined} 
 		/>

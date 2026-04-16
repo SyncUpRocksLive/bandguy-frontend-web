@@ -68,6 +68,7 @@
 	}
 
 	function handleCreateTrack(event: CustomEvent<Omit<Track, 'id' | 'createdAtMsUtc'>>) {
+		console.log('TrackEditor::handleCreateTrack() Creating new track with data:', event.detail);
 		const newTrack = event.detail;
 		oncreatetrack?.(newTrack);
 		showAddTrackModal = false;
@@ -96,7 +97,7 @@
 		<!-- Right Pane: Contextual Editor -->
 		{#if selectedTrack}
 			<ContextualEditor
-				track={selectedTrack}
+				bind:track={selectedTrack}
 				bind:hasChanges={hasChanges}
 				bind:loading={loading}
 				onchange={handleTrackChange}

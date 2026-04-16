@@ -8,7 +8,10 @@
 		onchange?: (track: Track, fields: [string]) => void;
 	}
 
-	const { track, onchange }: Props = $props();
+	let { 
+		track=$bindable(), 
+		onchange 
+	}: Props = $props();
 
 	let config = $derived(track.configuration ? JSON.parse(track.configuration) : {});
 	let textContent = $state('');
@@ -38,7 +41,7 @@
 
 		return [true, 'Valid'];
 	}
-		
+
 	export async function save() {
 		console.log('TextTrackEditor: Save invoked, current track state:', track);
 
@@ -49,6 +52,7 @@
 			const result = await uploadFilesetData(track, new Blob([textContent], { type: 'text/plain' }));
 
 			if (result.ok) {
+				// TODO: we need to adjust this
 				track.fileSetId = result.value.filesetId;
 				track.versionNumber = result.value.versionNumber;
 				console.log('TextTrackEditor: File data uploaded successfully, updated fileset:', track.fileSetId, 'version:', track.versionNumber);

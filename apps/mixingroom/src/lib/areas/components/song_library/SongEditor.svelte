@@ -4,14 +4,16 @@
 	import { msToHMS } from '@shared/display/DisplayHelpers';
 	import { getSongComplete, saveTrack, deleteTrack, createTrack, type SongSaveRequest, songSave } from '@shared/services/syncuprocks/musician/Api';
 	import type { Song, Track } from '@shared/services/syncuprocks/musician/Types';
-	import { untrack } from 'svelte';
+	import { tick, untrack } from 'svelte';
 	import { router } from '@/Router.svelte';
 
 	interface Props {
 		songId?: number;
 	}
 
-	const { songId }: Props = $props();
+	let { 
+		songId = $bindable()
+	}: Props = $props();
 
 	let song: Song | null = $state(null);
 	let tracks: Track[] = $state([]);
@@ -23,20 +25,24 @@
 
 	// Initialize: Fetch song and tracks
 	async function loadSong() {
-		console.log('Loading song with ID:', songId);
 		if (!songId || songId <= 0) {
+			console.log(`SongEditor::loadSong() NULL SONG - setting default song state`);
+
 			song = {
 				id: 0,
-				musicianId: "",
+				musicianId: '',
 				createdAtMsUtc: Date.now(),
 				name: 'Untitled',
 				durationMilliseconds: 60 * 1000, // Default to 1 minute
 				tracks: [],
 				setOrder: 0
 			};
+
 			tracks = [];
 			return;
 		}
+
+		console.log(`SongEditor::loadSong() SongId: ${songId}`);
 
 		loading = true;
 		error = null;
@@ -54,7 +60,13 @@
 			}
 
 			song = songData;
-			tracks = songData.tracks || [];
+			if (!songData.tracks) {
+				console.warn('SongEditor::loadSong() No tracks found for song, initializing empty array');
+				song.tracks = [];
+			} else {
+				console.log('SongEditor::loadSong() Tracks loaded:', songData.tracks);
+				tracks = songData.tracks
+			}
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load song';
 		} finally {
@@ -88,9 +100,18 @@
 
 	// Handle creating a new track
 	async function handleCreateTrack(newTrack: Omit<Track, 'songId' | 'fileSetId' | 'id' | 'createdAtMsUtc'>) : Promise<boolean> {
-		if (!song || !await handleSaveSongItem({ name: song.name, durationMs: song.durationMilliseconds})) {
-			console.error('handleCreateTrack:No song loaded, cannot save');
-			return false;
+		if (!song) return false;
+
+		if (!songId || song.id <= 0) {
+			// Note: on new save, reroutes URL param - causes re-mount 
+			console.log('SongEditor::handleCreateTrack: No existing song, attempting to save song before creating track');
+			if (!await handleSaveSongItem({ name: song.name, durationMs: song.durationMilliseconds}, false)) {
+				console.error('SongEditor::handleCreateTrack: Save returned false, cannot create track without song ID');
+				return false;
+			}
+
+			await tick(); // Wait for state updates and potential remount
+			console.log('SongEditor::handleCreateTrack: Song saved successfully, proceeding to create track with new song ID:', song.id);
 		}
 
 		loading = true;
@@ -112,23 +133,27 @@
 				return false;
 			}
 
+			console.log('SongEditor::handleCreateTrack() createTrack result:', result);
+
 			tracks = [...tracks, {
 				...newTrack,
 				...newDto,
 				...result.value,
 			}];
+
+			console.log('SongEditor::handleCreateTrack() Track created successfully, updated tracks list:', tracks);
+			updateRouteOnNewSong();
+			return true;
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to create track';
 			return false;
 		} finally {
 			loading = false;
 		}
-
-		return true;
 	}
 
 	// Handle saving the song
-	async function handleSaveSongItem(data: { name: string; durationMs: number }) : Promise<boolean> {
+	async function handleSaveSongItem(data: { name: string; durationMs: number }, updateRoute: boolean = false) : Promise<boolean> {
 		if (!song) {
 			console.error('handleSaveSongItem: No song loaded, cannot save');
 			return false;
@@ -136,7 +161,7 @@
 
 		const needsSaving = song.id <= 0 || data.name !== song.name || data.durationMs !== song.durationMilliseconds;
 		if (!needsSaving) {
-			console.log('handleSaveSongItemNo changes detected, skipping save');
+			console.log('SongEditor::handleSaveSongItem() No changes detected, skipping save');
 			showEditModal = false;
 			return true;
 		}
@@ -144,7 +169,7 @@
 		loading = true;
 		error = null;
 		try {
-			console.log('Saving song with data:', data);
+			console.log('SongEditor::handleSaveSongItem() saving song with data:', data);
 
 			const request: SongSaveRequest = { ...song, 
 				id: song.id > 0 ? song.id : undefined,
@@ -157,15 +182,20 @@
 				return false;
 			}
 
+			if (!song.id) {
+				console.log('SongEditor::handleSaveSongItem() New Song saved successfully with ID:', result.value.id);
+				songId = result.value.id!;
+			}
+
 			song.id = result.value.id!;
 			song.name = result.value.name;
 			song.durationMilliseconds = result.value.durationMilliseconds;
 
-			// Ensure page refresh keeps us on same song if we just created it
-			if (router.route.params && router.route.params.length > 0 && router.route.params[0] === 'create') {
-				const newParam = `${song.id}`;
-				router.replace('SongLibrary', [newParam]);
+			if (updateRoute) {
+				updateRouteOnNewSong();
 			}
+
+			return true;
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to update song';
 			return false;
@@ -173,8 +203,14 @@
 			loading = false;
 			showEditModal = false;
 		}
+	}
 
-		return true;
+	function updateRouteOnNewSong() {
+		// Ensure page refresh keeps us on same song if we just created it
+		if (song && song.id > 0 && router.route.params && router.route.params.length > 0 && router.route.params[0] === 'create') {
+			const newParam = `${song.id}`;
+			router.replace('SongLibrary', [newParam]);
+		}
 	}
 
 	// Load song on mount
@@ -218,7 +254,7 @@
 	<SongItemEditor
 		name={editName}
 		durationMs={editDuration}
-		onsave={handleSaveSongItem}
+		onsave={(data) => handleSaveSongItem(data, true)}
 		oncancel={() => showEditModal = false}
 	/>
 {/if}

@@ -46,7 +46,7 @@
 		loading = true;
 		error = null;
 		try {
-			const result = await getSetComplete(setId);
+			const result = await getSetComplete(setId, false);
 			if (result.ok) {
 				setComplete = result.value!;
 				console.log('Fetched set details:', setComplete);

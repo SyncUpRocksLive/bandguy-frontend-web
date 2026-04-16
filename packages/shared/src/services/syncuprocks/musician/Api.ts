@@ -46,8 +46,13 @@ const checkErrorResponse = (response: ApiResponseBase<any>, context: string, che
  * @param setId Set Identifier
  * @returns 
  */
-export const getSetComplete = async (setId: number) : Promise<Result<SetComplete | null>> => {
-	const response = await fetch(`/api/legacy/user/sets/complete/${setId}`, { method: "GET", headers: { "Content-Type": "application/json" }});
+export const getSetComplete = async (setId: number, useCache: boolean = true) : Promise<Result<SetComplete | null>> => {
+	let url = `/api/legacy/user/sets/complete/${setId}`;
+	if (!useCache) {
+		url += '?useCache=false';
+	}
+
+	const response = await fetch(url, { method: "GET", headers: { "Content-Type": "application/json" }});
 	let error = checkHttpResponse(response, `fetching complete set details for setId=${setId}`);
 	if (error)
 		return { ok: false, error };

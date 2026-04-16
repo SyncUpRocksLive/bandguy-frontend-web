@@ -2,7 +2,7 @@ import { Log } from "@shared/services/Logger";
 import { ApiResponseBase } from "@shared/services/syncuprocks/Types";
 import { LoggedInStatus } from "./Types";
 
-// TODO: Handle slide (keeping web server session alive with periodic pings)
+// FUTURE: Handle slide (keeping web server session alive with periodic pings)
 export const GetAuthState = async (slide: boolean = false) : Promise<LoggedInStatus | null> =>  {
 	Log('verbose', 'Checking login state...');
 	const data = await fetch(`/api/auth/loggedin`, { method: "GET", headers: { "Content-Type": "application/json" }});
