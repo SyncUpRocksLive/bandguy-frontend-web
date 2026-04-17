@@ -43,7 +43,7 @@
 	}
 
 	export async function save() {
-		console.log('TextTrackEditor: Save invoked, current track state:', track);
+		console.log('TextTrackEditor::save Saving track:', track.id, track.fileSetId);
 
 		isLoading = true;
 		error = null;
@@ -52,14 +52,15 @@
 			const result = await uploadFilesetData(track, new Blob([textContent], { type: 'text/plain' }));
 
 			if (result.ok) {
-				// TODO: we need to adjust this
 				track.fileSetId = result.value.filesetId;
 				track.versionNumber = result.value.versionNumber;
-				console.log('TextTrackEditor: File data uploaded successfully, updated fileset:', track.fileSetId, 'version:', track.versionNumber);
+				console.log('TextTrackEditor::save File data uploaded successfully, updated fileset:', track.fileSetId, 'version:', track.versionNumber);
 				return true;
 			} else {
 				error = `Failed to upload file: ${result.error.message}`;
 			}
+
+			return true;
 		} catch (err) {
 			error = `Error uploading file data: ${err instanceof Error ? err.message : 'Unknown error'}`;
 			return false;
@@ -97,11 +98,12 @@
 	}
 
 	$effect(() => {
-		console.log('TrackEditor:Track configuration changed, updating local state');
 		// Narrow the dependency: Only track the things that REQUIRE a refetch.
 		// We don't care if the track name or order changed.
 		const fileId = track.fileSetId;
 		const version = track.versionNumber;
+
+		console.log(`TrackEditor:Track configuration changed, updating local state trackId=${track.id}, filesetId=${track.fileSetId}`);
 		
 		// ...but wrap the function call in untrack so 
 		// internal state changes (like 'loading = true') don't re-trigger it.

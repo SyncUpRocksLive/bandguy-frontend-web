@@ -328,5 +328,5 @@ export const uploadFilesetData = async (track: Track, fileData: Blob) : Promise<
 	error = checkErrorResponse(data, `uploading file data for filesetId=${track.fileSetId}`, false);
 	if (error) return { ok: false, error };
 
-	return { ok: true, value: {filesetId: track.fileSetId!, versionNumber: track.versionNumber} };
+	return { ok: true, value: {filesetId: data.data!.fileSetId!, versionNumber: data.data!.versionNumber} };
 }

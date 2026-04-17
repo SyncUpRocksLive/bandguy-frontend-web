@@ -126,6 +126,8 @@
 				configuration: newTrack.configuration
 			}
 
+			console.log('SongEditor::handleCreateTrack() Creating track with data:', newDto);
+
 			const result = await createTrack(newDto);
 
 			if (!result.ok) {
@@ -135,13 +137,17 @@
 
 			console.log('SongEditor::handleCreateTrack() createTrack result:', result);
 
-			tracks = [...tracks, {
-				...newTrack,
+			const finalNewTrack: Track = {
 				...newDto,
-				...result.value,
-			}];
+				id: result.value.id!,
+				name: result.value.name,
+				fileSetId: undefined
+			};
 
-			console.log('SongEditor::handleCreateTrack() Track created successfully, updated tracks list:', tracks);
+			console.log('SongEditor::handleCreateTrack() Track created successfully, combined new track:', finalNewTrack);
+
+			tracks = [...tracks, finalNewTrack];
+
 			updateRouteOnNewSong();
 			return true;
 		} catch (err) {

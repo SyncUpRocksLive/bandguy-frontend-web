@@ -39,7 +39,7 @@
 			name: trackName.trim(),
 			type: trackType as TrackType,
 			format: trackFormat as TrackFormat,
-			versionNumber: 0,
+			versionNumber: undefined,
 			configuration: undefined
 		};
 
