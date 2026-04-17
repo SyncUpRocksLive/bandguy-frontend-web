@@ -2,6 +2,13 @@
 import type { UserState, PeerOperationMode, ConnectedUser, SongPlayStatus, StoreItems } from '@/Types/Types';
 import type { MessageBusEvent } from '@/Types/MessageBus';
 
+// Correct UserState interface
+interface UserState {
+	displayName: string;
+	username: string;
+	userId: string;
+}
+
 interface AppStoreItems extends StoreItems {
 	messageBus: MessageBusEvent[] | null; // TODO: define MessageBus properly
 }

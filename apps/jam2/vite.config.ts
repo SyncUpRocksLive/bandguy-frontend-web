@@ -4,9 +4,9 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	base: '/jam2', // Crucial for asset paths in the browser
+	base: '/temp', // Crucial for asset paths in the browser
 	build: {
-    	outDir: '../../public/jam2', // Drops the built files into your Nginx root
+    	outDir: '../../public/temp', // Drops the built files into your Nginx root
     	emptyOutDir: true
   	},
 	plugins: [svelte()],
@@ -24,7 +24,7 @@ export default defineConfig({
         },
 
         // 4. API Proxying
-        // Since you're running the SPA at /jam2, requests to /jam2/api need to go to your .NET app.
+        // Since you're running the SPA at /temp, requests to /temp/api need to go to your .NET app.
         proxy: {
             '/api': {
                 target: 'http://localhost:9001',

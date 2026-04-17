@@ -9,13 +9,24 @@
 	import SetList from "./components/SetList.svelte";
 	import SetView from "./components/SetView.svelte";
 	import Guest from "./components/Guest.svelte";
+	import TopNavBar from "./components/TopNavBar.svelte";
+	import BandLeaderService from "./components/Services/BandLeaderService.svelte";
+	import MessageChannelService from "./components/Services/MessageChannelService.svelte";
 	import { queryClient } from './queryClient';
+	import { PeerOperationMode } from './Types/Types';
 
 	// Set up TanStack Query
 	setContext(QueryClient, queryClient);
 </script>
 
 {#if auth.isAuthenticated}
+	<TopNavBar />
+	{#if appState.store.peerMode === PeerOperationMode.Host}
+		<BandLeaderService />
+	{/if}
+	{#if appState.store.peerMode !== PeerOperationMode.Solo}
+		<MessageChannelService />
+	{/if}
 	{#if router.route.area === 'Home'}
 		<Home />
 	{:else if router.route.area === 'HostSets'}

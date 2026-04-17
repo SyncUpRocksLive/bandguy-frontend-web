@@ -2,6 +2,7 @@ public/jam/
 public/mixingroom/
 public/profile/
 public/song_editor/
+public/**
 
 *.lrc
 *.mp3

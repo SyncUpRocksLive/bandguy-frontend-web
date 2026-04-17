@@ -25,7 +25,7 @@ export default defineConfig({
         changeOrigin: true,
         ws: true
       },
-      '/jam2': {
+      '/temp': {
         target: 'http://localhost:5175',
         changeOrigin: true,
         ws: true // Crucial for WebRTC signals/WebSockets

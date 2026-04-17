@@ -1,15 +1,36 @@
-// Placeholder - TODO: import from shared
+// Real auth implementation copied from shared
 interface LoggedInStatus {
-	isLoggedIn: boolean;
-	userId?: string;
-	username?: string;
-	logInUrl?: string;
-	logOutUrl?: string;
+    isLoggedIn: boolean;
+    userId: string;
+    userProfileName: string;
+    username: string;
+    logInUrl?: string;
+    logOutUrl?: string;
 }
 
-const GetAuthState = async (): Promise<LoggedInStatus | null> => {
-	// TODO: implement actual auth check
-	return { isLoggedIn: false };
+interface ApiResponseBase<T> {
+	success: boolean;
+	data?: T;
+	errorMessage?: string;
+}
+
+const Log = console.log; // Placeholder logger
+
+const GetAuthState = async (slide: boolean = false): Promise<LoggedInStatus | null> => {
+	Log('verbose', 'Checking login state...');
+	const data = await fetch(`/api/auth/loggedin`, { method: "GET", headers: { "Content-Type": "application/json" }});
+	const response: ApiResponseBase<LoggedInStatus> = await data.json();
+	Log('verbose', `Checking login state... ${data.status}`);
+	if (data.status === 401 || !response.data || response.data.isLoggedIn === false || !response.data.userId || !response.data.username) {
+		Log('verbose', 'Checking login state... Unauthorized');
+		return null;
+	}
+	else if (!response.success) {
+		Log('error', `Checking login state... unknown failure ${response.errorMessage}`);
+		return null;
+	}
+
+	return response.data;
 };
 
 // src/auth.svelte.ts
@@ -41,7 +62,11 @@ class AuthService {
 
 			// Update state
 			this.isAuthenticated = loginState ? loginState.isLoggedIn : false;
-			this.user = loginState || null;
+			this.user = loginState ? {
+				displayName: loginState.userProfileName,
+				username: loginState.username,
+				userId: loginState.userId
+			} : null;
 
 			if (loginState) {
 				this.loginUrl = loginState.logInUrl || null;

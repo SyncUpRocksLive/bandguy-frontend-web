@@ -6,9 +6,11 @@
 	import { Log, LogVerbose } from '@shared/services/Logger';
 // Placeholder types - TODO: import from shared
 interface SetComplete {
+	musicianId: number;
 	id: number;
 	name: string;
-	songs: any[];
+	createdAtMsUtc: number;
+	songs: any[]; // Song[]
 }
 
 interface ApiResponseBase<T> {

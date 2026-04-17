@@ -6,9 +6,11 @@
 	import { Log } from '@shared/services/Logger';
 // Placeholder types - TODO: import from shared
 interface SetOverview {
+	musicianId: number;
 	id: number;
 	name: string;
-	songs: any[];
+	createdAtMsUtc: number;
+	songs: any[]; // SongOverview[]
 }
 
 interface ApiResponseBase<T> {
