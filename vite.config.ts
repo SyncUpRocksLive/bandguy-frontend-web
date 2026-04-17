@@ -19,11 +19,16 @@ export default defineConfig({
         target: 'http://localhost:5173',
         changeOrigin: true,
         ws: true // Crucial for WebRTC signals/WebSockets
-      },      
+      },
       '/mixingroom': {
         target: 'http://localhost:5174',
         changeOrigin: true,
         ws: true
+      },
+      '/jam2': {
+        target: 'http://localhost:5175',
+        changeOrigin: true,
+        ws: true // Crucial for WebRTC signals/WebSockets
       },
       '/profile': {
         target: 'http://localhost:5175',
