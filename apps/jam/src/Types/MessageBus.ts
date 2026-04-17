@@ -1,6 +1,11 @@
-import { StoreItems } from "@/Support/Stores/Types";
+import { StoreItems } from "@/Types/Types";
 import { Client } from "./Client";
-import { Message } from "@shared/services/syncuprocks/musician/MessageTypes";
+
+// Placeholder - TODO: import from shared
+interface Message {
+	id: string;
+	content: string;
+}
 
 export enum MessageBusActionType {
 	MESSAGE = 'MESSAGE',
@@ -10,7 +15,7 @@ export enum MessageBusActionType {
 	PLAY_CLOCK_TICK = 'PLAY_CLOCK_TICK',
 }
 
-export type MessageBusEventType = 
+export type MessageBusEventType =
 |{ type: MessageBusActionType.MESSAGE, message: Message[] }
 |{ type: MessageBusActionType.KICKOUT, userId: string, instance: string }
 |{ type: MessageBusActionType.PEER_CLOSED, client: Client }

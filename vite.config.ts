@@ -15,8 +15,8 @@ export default defineConfig({
       '.local'        // Or use a wildcard for any .local address
     ],
     proxy: {
-      '/jam': {
-        target: 'http://localhost:5173',
+      '/old': {
+        target: 'http://localhost:5175',
         changeOrigin: true,
         ws: true // Crucial for WebRTC signals/WebSockets
       },
@@ -25,8 +25,8 @@ export default defineConfig({
         changeOrigin: true,
         ws: true
       },
-      '/temp': {
-        target: 'http://localhost:5175',
+      '/jam': {
+        target: 'http://localhost:5173',
         changeOrigin: true,
         ws: true // Crucial for WebRTC signals/WebSockets
       },

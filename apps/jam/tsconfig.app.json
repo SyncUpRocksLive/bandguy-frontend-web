@@ -4,8 +4,6 @@
     "tsBuildInfoFile": "./node_modules/.dotcache/tsconfig.app.tsbuildinfo",
     "target": "ESNext",
     "module": "ESNext",
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "moduleResolution": "bundler", // Crucial for Vite 8 / Node 24
     "paths": {
       "@/*": ["./src/*"],

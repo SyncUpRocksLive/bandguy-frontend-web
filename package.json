@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev-all-temp": "concurrently -n \"LANDING,JAM,MIXINGROOM,JAM2\" -c \"magenta,yellow,cyan,blue\" \"vite\" \"npm run dev --workspace=apps/jam\" \"npm run dev --workspace=apps/mixingroom\" \"npm run dev --workspace=apps/jam2\"",
+    "dev-all-temp": "concurrently -n \"LANDING,OLD,MIXINGROOM,JAM\" -c \"magenta,yellow,cyan,blue\" \"vite\" \"npm run dev --workspace=apps/jam\" \"npm run dev --workspace=apps/mixingroom\" \"npm run dev --workspace=apps/old\"",
     "dev-all": "concurrently -n \"LANDING,JAM\" -c \"magenta,yellow,cyan,blue\" \"vite\" \"npm run dev --workspace=apps/jam\" \"npm run dev --workspace=apps/mixingroom\"",
     "build": "npm run build --workspaces",
     "install-all": "npm install && npm install --workspaces"

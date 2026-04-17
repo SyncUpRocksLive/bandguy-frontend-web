@@ -1,12 +1,5 @@
-// Placeholder - TODO: import from shared
-enum TrackFormat {
-	Lyric = 'Lyric',
-	Text = 'Text',
-}
-
-const Log = console.log;
-const LogError = console.error;
-const LogInfo = console.info;
+import { TrackFormat } from "@shared/services/syncuprocks/musician/Types";
+import { Log, LogError, LogInfo } from "@shared/services/Logger";
 
 export interface SongBlob {
 	songId: number;
@@ -71,7 +64,7 @@ export function getSongStore():ISongStore {
 
 				// Create an objectStore for this database
 				if (e.newVersion === 1) {
-					//const objectStore =
+					//const objectStore = 
 					db.createObjectStore('trackData', { keyPath: ['songId', 'trackId'] });
 					//objectStore.createIndex('blob', 'blob', { unique: false });
 				}
