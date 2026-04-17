@@ -4,6 +4,9 @@
 	import { router } from '../Router.svelte';
 	import { PeerOperationMode } from '../Types/Types';
 	import Configuration from './Configuration.svelte';
+	import HostModeStatus from './HostModeStatus.svelte';
+	import GuestModeStatus from './GuestModeStatus.svelte';
+	import UserProfile from './UserProfile.svelte';
 </script>
 
 {#if auth.user}
@@ -18,18 +21,10 @@
 			</div>
 
 			<div style="flex: auto; display: flex; flex-direction: row; column-gap: 0; justify-content: right; align-items: right;">
-				{#if appState.store.peerMode === PeerOperationMode.Host}
-					<!-- HostModeStatus placeholder -->
-					<span>Host</span>
-				{/if}
-				{#if appState.store.peerMode === PeerOperationMode.Guest}
-					<!-- GuestModeStatus placeholder -->
-					<span>Guest</span>
-				{/if}
-				<!-- Configuration placeholder -->
+				<HostModeStatus />
+				<GuestModeStatus />
 				<Configuration />
-				<!-- UserProfile placeholder -->
-				<span>{auth.user.displayName}</span>
+				<UserProfile />
 			</div>
 		</div>
 	</header>
@@ -45,18 +40,6 @@
 	}
 
 	a:hover {
-		text-decoration: underline;
-	}
-
-	button {
-		background: none;
-		border: none;
-		color: white;
-		cursor: pointer;
-		margin: 0 5px;
-	}
-
-	button:hover {
 		text-decoration: underline;
 	}
 </style>

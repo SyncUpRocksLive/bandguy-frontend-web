@@ -1,3 +1,5 @@
+import { appState } from './State.svelte';
+
 // Real auth implementation copied from shared
 interface LoggedInStatus {
     isLoggedIn: boolean;
@@ -68,20 +70,28 @@ class AuthService {
 				userId: loginState.userId
 			} : null;
 
+			appState.updateStore({
+				user: this.user ? {
+					displayName: this.user.displayName,
+					username: this.user.username,
+					userId: this.user.userId
+				} : undefined
+			});
+
 			if (loginState) {
 				this.loginUrl = loginState.logInUrl || null;
 				this.logoutUrl = loginState.logOutUrl || null;
 			}
 
-			// If we were logged in and now we aren't, handle it
+			// If we were logged in and now we aren't, stop polling
 			if (this.isAuthenticated === false) {
 				this.stopPolling();
 			}
 		} catch (err) {
 			this.isAuthenticated = false;
+		} finally {
+			this.isChecking = false;
 		}
-
-		this.isChecking = false;
 	}
 
 	startPolling() {

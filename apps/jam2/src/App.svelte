@@ -1,32 +1,33 @@
 <script lang="ts">
-	import { setContext } from 'svelte';
-	import { QueryClient } from '@tanstack/svelte-query';
-	import { auth } from "./Auth.svelte";
-	import { router } from "./Router.svelte";
-	import { appState } from "./State.svelte";
-	import Login from "./components/Login.svelte";
-	import Home from "./components/Home.svelte";
-	import SetList from "./components/SetList.svelte";
-	import SetView from "./components/SetView.svelte";
-	import Guest from "./components/Guest.svelte";
-	import TopNavBar from "./components/TopNavBar.svelte";
-	import BandLeaderService from "./components/Services/BandLeaderService.svelte";
-	import MessageChannelService from "./components/Services/MessageChannelService.svelte";
-	import { queryClient } from './queryClient';
-	import { PeerOperationMode } from './Types/Types';
-
-	// Set up TanStack Query
-	setContext(QueryClient, queryClient);
+import { auth } from "./Auth.svelte";
+import { router } from "./Router.svelte";
+import { appState } from "./State.svelte";
+import Login from "./components/Login.svelte";
+import { QueryClientProvider } from '@tanstack/svelte-query';
+import Home from "./components/Home.svelte";
+import SetList from "./components/SetList.svelte";
+import SetView from "./components/SetView.svelte";
+import Guest from "./components/Guest.svelte";
+import TopNavBar from "./components/TopNavBar.svelte";
+import BandLeaderService from "./components/Services/BandLeaderService.svelte";
+import MessageChannelService from "./components/Services/MessageChannelService.svelte";
+import FollowerService from "./components/Services/FollowerService.svelte";
+import { queryClient } from './queryClient';
+import { PeerOperationMode } from './Types/Types';
 </script>
 
-{#if auth.isAuthenticated}
-	<TopNavBar />
-	{#if appState.store.peerMode === PeerOperationMode.Host}
-		<BandLeaderService />
-	{/if}
-	{#if appState.store.peerMode !== PeerOperationMode.Solo}
-		<MessageChannelService />
-	{/if}
+<QueryClientProvider client={queryClient}>
+	{#if auth.isAuthenticated}
+		<TopNavBar />
+		{#if appState.store.peerMode === PeerOperationMode.Host}
+			<BandLeaderService />
+		{/if}
+		{#if appState.store.peerMode === PeerOperationMode.Guest}
+			<FollowerService />
+		{/if}
+		{#if appState.store.peerMode !== PeerOperationMode.Solo}
+			<MessageChannelService />
+		{/if}
 	{#if router.route.area === 'Home'}
 		<Home />
 	{:else if router.route.area === 'HostSets'}
@@ -44,8 +45,9 @@
 		<button onclick={() => router.navigate("Home")}>Go Home</button>
 	{/if}
 {:else}
-	<Login />
-{/if}
+		<Login />
+	{/if}
+</QueryClientProvider>
 
 <style>
 	:global(body) {

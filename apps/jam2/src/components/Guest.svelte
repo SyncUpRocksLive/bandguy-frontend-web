@@ -1,33 +1,39 @@
 <script lang="ts">
 	import { appState } from '../State.svelte';
 	import { PeerOperationMode } from '../Types/Types';
+	import BandJoin from './BandJoin.svelte';
+	import SetView from './SetView.svelte';
 
-	// Set peer mode to Guest
+	// Set peer mode to Guest when this component mounts
 	$effect(() => {
-		appState.setPeerMode(PeerOperationMode.Guest);
+		if (appState.store.peerMode !== PeerOperationMode.Guest) {
+			appState.setPeerMode(PeerOperationMode.Guest);
+		}
+	});
+
+	// Check if connected
+	let isConnected = $state(false);
+
+	$effect(() => {
+		isConnected = !!appState.store.currentSetId;
 	});
 </script>
 
-<div class="guest-view">
-	<h2>Guest Mode</h2>
-	<p>Join a remote band session</p>
-	<!-- TODO: Implement BandJoin dialog and remote SetView -->
-	<div class="placeholder">
-		Guest functionality not yet implemented
-	</div>
+<div class="guest-container">
+	{#if !isConnected}
+		<BandJoin />
+	{:else}
+		<SetView mode="guest" setId={appState.store.currentSetId} />
+	{/if}
 </div>
 
 <style>
-	.guest-view {
-		padding: 20px;
-		text-align: center;
-	}
-
-	.placeholder {
-		margin: 20px 0;
-		padding: 20px;
-		border: 2px dashed #ccc;
-		border-radius: 8px;
-		background-color: #f8f9fa;
+	.guest-container {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		margin: 1px;
+		padding: 5px;
+		overflow-y: auto;
 	}
 </style>

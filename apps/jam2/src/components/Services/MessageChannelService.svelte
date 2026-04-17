@@ -1,24 +1,35 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { appState } from '../../State.svelte';
 	import { PeerOperationMode } from '../../Types/Types';
-	import { messageBus } from '../../Support/MessageBus';
+	import { broadcastMessage } from '../../Support/MessageBus';
+	import { Messages } from '@shared/services/syncuprocks/musician/MessageQueue';
+	import { LogError, LogInfo } from '@shared/services/Logger';
+	import { MessageBusActionType } from '../../Types/MessageBus';
 
 	let lastMessageTime = $state(null);
 
-	// Placeholder MessageChannelService - polls for messages
+	// MessageChannelService - polls for messages
 	const query = createQuery({
 		queryKey: ['my.messages'],
 		queryFn: async () => {
 			if (!appState.store.user || appState.store.peerMode === PeerOperationMode.Solo) {
+				LogError('MessageChannelService: No user or invalid peer mode');
 				return [];
 			}
 
-			// TODO: Implement Messages.getMessages()
-			console.log('Polling for messages...');
+			const response = await Messages.getMessages();
+			if (response.length > 0) {
+				LogInfo(`MessageChannelService: Rx'd ${response.length} new messages`);
+				broadcastMessage({
+					data: {
+						type: MessageBusActionType.MESSAGE,
+						message: response
+					}
+				});
+			}
 			lastMessageTime = new Date().toLocaleTimeString();
-			return [];
+			return response;
 		},
 		refetchInterval: 1000,
 		staleTime: 0,
