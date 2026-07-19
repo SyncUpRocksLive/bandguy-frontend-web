@@ -35,8 +35,15 @@
 		}
 
 		// TODO: Add format-specific validation (e.g. for lyrics, check for [Verse], [Chorus] sections; for tablature, check for valid string indicators)
-		if(lines.some(line => !line.startsWith("["))) {
-			return [false, 'One or more lines do not start with a bracket'];
+		console.log(`TextTrackEditor: Validating content, line count: ${lines.length}, type=${track.type} format=${track.format}`);
+
+		if (track.format.toUpperCase() === 'LYRIC') {
+			// For lyrics, ensure that each line starts with a bracketed section or is empty
+			if(lines.every(line => line.trim() !== '' && !line.startsWith('['))) {
+				return [false, 'One or more lines do not start with a bracketed section (e.g., [Verse], [Chorus])'];
+			}
+		} else if (track.format.toUpperCase() === 'TEXT') {
+			// Plain text can be anything for now.
 		}
 
 		return [true, 'Valid'];

@@ -23,20 +23,13 @@ export enum TrackType {
 	RhythmGuitar = 'RhythmGuitar',
 }
 
-export enum TrackFormat {
-	// Lyric File Format (Contains times, and chords)
-	Lyric = 'Lyric',
-	// Plain text (Static - no time information)
-	Text = 'Text,'
-}
-
 export interface Track {
 	id: number;
 	songId: number;
 	fileSetId?: number;
 	name: string;
 	type: TrackType;
-	format: TrackFormat;
+	format: string;
 	createdAtMsUtc: number;
 	versionNumber?: number;
 	configuration?: string;

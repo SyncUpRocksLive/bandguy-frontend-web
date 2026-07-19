@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Track, TrackType, TrackFormat } from '@shared/services/syncuprocks/musician/Types';
+	import type { Track, TrackType } from '@shared/services/syncuprocks/musician/Types';
 
 	interface Props {
 		oncreate?: (event: CustomEvent<Omit<Track, 'id' | 'createdAtMsUtc'>>) => void;
@@ -38,7 +38,7 @@
 		const newTrack: Omit<Track, 'songId' | 'fileSetId' | 'id' | 'createdAtMsUtc'> = {
 			name: trackName.trim(),
 			type: trackType as TrackType,
-			format: trackFormat as TrackFormat,
+			format: trackFormat,
 			versionNumber: undefined,
 			configuration: undefined
 		};

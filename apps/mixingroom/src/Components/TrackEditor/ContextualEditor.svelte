@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MetronomeTrackEditor from './Editors/MetronomeTrackEditor.svelte';
 	import TextTrackEditor from './Editors/TextTrackEditor.svelte';
-	import type { Track, TrackFormat } from '@shared/services/syncuprocks/musician/Types';
+	import type { Track } from '@shared/services/syncuprocks/musician/Types';
 
 	interface Props {
 		track: Track;
@@ -79,7 +79,7 @@
 		{:else if track.format === 'metronome'}
 			<!-- <MetronomeTrackEditor {track} {onchange} /> -->
 			 <b>Unsupported format</b>
-		{:else if track.format === 'Lyric' || track.format === 'tab' || track.format === 'Text' || track.format === 'Text,'}
+		{:else if track.format.toUpperCase() === 'LYRIC' || track.format.toUpperCase() === 'TAB' || track.format.toUpperCase() === 'TEXT'}
 			<TextTrackEditor 
 				bind:this={currentEditorRef}
 				bind:track={track} 
