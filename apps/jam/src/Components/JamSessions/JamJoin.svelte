@@ -38,6 +38,7 @@
 			identifier: channel.identifier,
 			friendlyName: channel.friendlyName,
 			timestamp: channel.timestamp,
+			code: channel.code,
 			status: 'pending'
 		}});
 	}

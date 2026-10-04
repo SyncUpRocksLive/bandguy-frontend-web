@@ -5,7 +5,7 @@ import { LogError, LogInfo, LogObject } from '@shared/services/Logger';
 
 export class Messages {
 	static async getMessages() {
-		const data = await fetch(`/api/legacy/message/read`, { method: "POST", headers: { "Content-Type": "application/json" }});
+		const data = await fetch(`/api/musician/jam/message/read`, { method: "POST", headers: { "Content-Type": "application/json" }});
 		const response: ApiResponseBase<Message[]> = await data.json()
 		if (response.success)
 			return response.data!;
@@ -25,6 +25,6 @@ export class Messages {
 		};
 
 		LogInfo(`Trying to connect: ${JSON.stringify(msg)}`)
-		await fetch(`/api/legacy/message/send`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(msg)});
+		await fetch(`/api/musician/jam/message/send`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(msg)});
 	}
 }
