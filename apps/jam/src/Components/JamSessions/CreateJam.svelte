@@ -17,17 +17,11 @@
 		queryFn: async () => {
 			// TODO: Refactor this to use same type of response as Api
 			LogInfo('Fetching user channel list...', 'JamJoin');
-			return await JamChannels.getChannelList();
-		},
-		onSuccess: (data: JamChannelDetail[]) => {
-			LogObject('info', 'JamJoin - Channel List', data);
+			const channels = await JamChannels.getChannelList();
 
-			// Show our own channels
-			const otherChannels = data
+			return channels
 				.filter((k) => k.hostUser === auth.user?.userId)
 				.sort((a, b) => a.timestamp - b.timestamp);
-
-			return otherChannels;
 		},
 		// TODO: Refresh does not seem to happen when a channel is created or deleted and we navigate back to this page. Need to investigate why.
 		// These refetch settings are not working as expected. The query is not being refetched when the component is mounted or when the window regains focus.
