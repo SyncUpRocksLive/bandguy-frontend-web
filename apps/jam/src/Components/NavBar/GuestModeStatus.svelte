@@ -13,6 +13,8 @@
 	function setShow(value: boolean) {
 		show = value;
 	}
+
+	// TODO: On Mount, if we are in guest mode, but not joined to a jam, show the join dialog automatically.
 </script>
 
 <button
@@ -28,12 +30,13 @@
 	<div class="status-overlay" onclick={() => setShow(false)} onkeydown={(e) => { if (e.key === 'Escape') setShow(false); }} role="dialog" aria-modal="true" tabindex="-1">
 		<div class="status-popover" onclick={(e) => e.stopPropagation()}>
 			<div class="status-header">
-				<h4>Band Members TODO</h4>
+				<h4>{$peerStore.peerChannelDetail?.friendlyName ?? '--'}</h4>
 				<button onclick={() => setShow(false)} aria-label="Close">&times;</button>
 			</div>
 			<div class="status-body">
 				<div class="band-section">
-					<!-- <strong>Band:</strong>
+					<strong>Bandmates:</strong>
+					<!--
 					<ul class="band-list">
 						{#each appState.store.connectedUsers as user (user.userId)}
 							<li class="band-item">
@@ -49,7 +52,7 @@
 						onclick={leaveChannel}
 						aria-label="Leave band"
 					>
-						Leave Band
+						Leave Jam
 					</button>
 				</div>
 			</div>
@@ -79,7 +82,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(4, 0, 36, 0.463);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -87,7 +90,7 @@
 	}
 
 	.status-popover {
-		background: white;
+		background: rgb(74, 68, 150);
 		border-radius: 0.5rem;
 		max-width: 400px;
 		width: 90%;
@@ -100,7 +103,6 @@
 		align-items: center;
 		padding: 1rem;
 		border-bottom: 1px solid #dee2e6;
-		background-color: #f8f9fa;
 		border-radius: 0.5rem 0.5rem 0 0;
 	}
 

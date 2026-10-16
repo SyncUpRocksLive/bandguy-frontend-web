@@ -6,11 +6,12 @@
 	import { Log } from '@shared/services/Logger';
 	import { getSetsOverview } from '@shared/services/syncuprocks/musician/Api';
 	import type { SetOverview } from '@shared/services/syncuprocks/musician/Types';
-	import { PeerOperationMode } from '@/Types/Types';
+	import { PeerOperationMode, PeerRole } from '@/Types/Types';
 	import CreateJam from '../JamSessions/CreateJam.svelte';
 	import JamJoin from '../JamSessions/JamJoin.svelte';
 	import { msToHMS } from '@shared/display/DisplayHelpers';
 
+	// TODO: When joined to a jam from a different host - we must load their setlist
 	let query = createQuery(() => ({
 		queryKey: ['my.setlist', auth.user?.userId ?? 'none'],
 		queryFn: async () => {
@@ -61,10 +62,6 @@
 			return JamJoin;
 		}
 
-		// TODO: Check jam state - if we have a jam, but are not joined, show joining dialog.
-		// That dialog will, if host, show a brief info of the session, and allow to start set
-		// That dialog will, if guest, validate the code and allow to join the session. If code is invalid, show error and allow to re-enter code.
-
 		return null;
 	});
 
@@ -83,6 +80,8 @@
 		<div class="control-grid">
 			{#if JamSetupDialog}
 				<JamSetupDialog />
+			{:else if $peerStore.peerChannelDetail && $peerStore.peerRole !== PeerRole.Leader}
+				WAITING FOR HOST TO START JAM
 			{:else}
 				<!-- TODO: Clean this style up -->
 				{#if query.isLoading}
