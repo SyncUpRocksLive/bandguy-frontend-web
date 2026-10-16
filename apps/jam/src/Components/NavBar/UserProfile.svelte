@@ -21,7 +21,7 @@
 		title={auth.user.userProfileName}
 		aria-label="User profile menu"
 	>
-		👤
+		👤 {auth.user.username}
 	</button>
 
 	{#if show}

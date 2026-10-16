@@ -5,6 +5,7 @@
 	import { JamChannels, type JamChannelDetail } from '@shared/services/syncuprocks/musician/JamChannels';
 	import { LogError, LogInfo, LogObject } from '@shared/services/Logger';
 	import { onMount } from 'svelte';
+	import { PeerOperationMode, PeerRole } from '@/Types/Types';
 
 	let joinCode = $state('');
 	let channelName = $state('');
@@ -43,10 +44,7 @@
 	const mutation = createMutation(() => ({
 		mutationFn: async () => {
 			return await JamChannels.createChannel({
-				hostUser: auth.user!.userId,
-				identifier: channelName,
 				friendlyName: channelName,
-				timestamp: Date.now(),
 				code: joinCode
 			});
 		},
@@ -62,7 +60,9 @@
 					timestamp: data!.timestamp,
 					code: data!.code,
 					status: 'connected'
-				}
+				},
+				peerRole: PeerRole.Leader,
+				peerMode: PeerOperationMode.Host
 			});
 
 			validationError = '';

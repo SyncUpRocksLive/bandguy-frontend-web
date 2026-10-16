@@ -1,12 +1,22 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query';
+	import { createMutation, createQuery } from '@tanstack/svelte-query';
 	import { auth } from "@shared/ui/stores/Auth.svelte";
 	import { JamChannels, type JamChannelDetail } from '@shared/services/syncuprocks/musician/JamChannels';
-	import { LogInfo, LogObject } from '@shared/services/Logger';
+	import { LogInfo, LogObject, LogError } from '@shared/services/Logger';
 	import { peerStore } from '@/Stores/PeerStore.svelte';
+	import { PeerOperationMode, PeerRole } from '@/Types/Types';
 
-	let joinCode = $state('1234');
-	let showJoinCodeInput = $state(false);
+	let joinCode = $state('');
+	let toast = $state('');
+	let jamChannelSelected = $state(null as JamChannelDetail | null);
+
+	function showToast(message: string) {
+		toast = message;
+
+		setTimeout(() => {
+			toast = '';
+		}, 3000);
+	}
 
 	// Query for available channels
 	const channelsQuery = createQuery(() => ({
@@ -30,31 +40,61 @@
 		enabled: !!auth.user,
 	}));
 
-	function joinChannel(channel: JamChannelDetail) {
-		console.log(`Joining channel: ${channel.friendlyName}`);
-		peerStore.updateState({
-			peerChannelDetail: {
-			hostUser: channel.hostUser,
-			identifier: channel.identifier,
-			friendlyName: channel.friendlyName,
-			timestamp: channel.timestamp,
-			code: channel.code,
-			status: 'pending'
-		}});
-	}
+	const mutationJoinChannel = createMutation(() => ({
+		mutationFn: async () => {
+			return await JamChannels.joinChannel({
+				identifier: jamChannelSelected!.identifier,
+				code: joinCode
+			});
+		},
+
+		onSuccess: (data) => {
+			if (!data.success) {
+				showToast(`Failed to join channel: ${data.errorMessage ?? 'Unknown error'}`);
+				return;
+			}
+
+			LogInfo(`Channel Joined`, 'JoinJam');
+			peerStore.updateState({
+				peerChannelDetail: {
+					hostUser: jamChannelSelected!.hostUser,
+					identifier: jamChannelSelected!.identifier,
+					friendlyName: jamChannelSelected!.friendlyName,
+					timestamp: jamChannelSelected!.timestamp,
+					code: jamChannelSelected!.code,
+					status: 'pending'
+				},
+				peerRole: PeerRole.Player,
+				peerMode: PeerOperationMode.Guest
+			});
+		},
+		onError: (err) => {
+			LogError(`Failed to join channel: ${err}`, 'JoinJam');
+			showToast(`Error trying to join channel: ${err}`);
+		}
+	}));
 
 	function joinWithCode() {
-		if (!joinCode.trim()) return;
-		console.log(`Joining with code: ${joinCode}`);
-		// TODO: Implement join by code logic
-		joinCode = '';
-		showJoinCodeInput = false;
+		if (!jamChannelSelected) {
+			showToast('Please select a jam room to join');
+			return;
+		}
+
+		if (!joinCode.trim()) {
+			showToast('Please enter a valid join code');
+			return;
+		}
+
+		LogInfo(`Joining channel ${jamChannelSelected?.friendlyName} with code: ${joinCode}`);
+		
+		mutationJoinChannel.mutate();
 	}
 </script>
 
 <div class="band-join-container">
 	<div class="band-header">
-		<p class="band-title">Band List</p>
+		<p class="band-title">Select Jam</p>
+		<!-- FUTURE: Group by band. Allow filter -->
 	</div>
 
 	<div class="band-content">
@@ -70,11 +110,11 @@
 					<li class="channel-item">
 						<button 
 							class="join-button"
-							onclick={() => joinChannel(channel)}
+							class:selected={jamChannelSelected?.identifier === channel.identifier}
+							onclick={() => jamChannelSelected = channel}
 							title={`Join ${channel.friendlyName}`}
-							
 						>
-							Join Band: <strong>{channel.friendlyName}</strong>
+							<strong>{channel.friendlyName}</strong>
 						</button>
 					</li>
 				{/each}
@@ -82,22 +122,29 @@
 		{/if}
 
 		<div class="code-input-section">
-			<input
-				type="text"
-				placeholder="Enter join code"
-				bind:value={joinCode}
-				onkeydown={(e) => {
-					if (e.key === 'Enter') joinWithCode();
-					if (e.key === 'Escape') showJoinCodeInput = false;
-				}}
-				class="code-input"
-			/>
-			<button onclick={joinWithCode} class="code-submit">
-				Join
-			</button>
+			{#if jamChannelSelected}
+				<input
+					type="text"
+					placeholder={`Enter ${jamChannelSelected?.friendlyName} code `}
+					bind:value={joinCode}
+					onkeydown={(e) => {
+						if (e.key === 'Enter') joinWithCode();
+					}}
+					class="code-input"
+				/>
+				<button onclick={joinWithCode} class="code-submit">
+					Join
+				</button>
+			{/if}
 		</div>
 	</div>
 </div>
+
+{#if toast}
+<div class="toast">
+    ⚠ {toast}
+</div>
+{/if}
 
 <style>
 	.band-join-container {
@@ -171,8 +218,8 @@
 		background: #0056b3;
 	}
 
-	.join-button:active {
-		background: #003d82;
+	.join-button.selected {
+		background: #7bc126;
 	}
 
 	.code-input-section {
@@ -215,5 +262,23 @@
 
 	.code-submit:hover {
 		background: #218838;
+	}
+
+	.toast {
+		position: fixed;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+
+		background: #333;
+		color: white;
+
+		padding: .75rem 1.25rem;
+
+		border-radius: .5rem;
+
+		box-shadow: 0 4px 12px rgba(0,0,0,.35);
+
+		z-index: 1000;
 	}
 </style>

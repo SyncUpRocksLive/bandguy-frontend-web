@@ -32,21 +32,19 @@
                 <div class="bar" class:open={isMenuOpen}></div>
             </button>
 
-
-
 			{#if $syncStore.songPlayStatus !== SongPlayStatus.Stop}
 				<TopNavBadge />
 			{/if}
 
 			<!-- Right Side Actions (Status/Profile always visible) -->
             <div class="actions">
-                {#if $peerStore.peerChannelDetail && ($peerStore.peerMode === PeerOperationMode.Guest || $peerStore.peerMode === PeerOperationMode.Host) && $peerStore.peerRole === PeerRole.Leader}
-                    <HostModeStatus />
+				{#if $peerStore.peerChannelDetail}
+					{#if $peerStore.peerRole === PeerRole.Leader}
+						<HostModeStatus />
+					{:else}
+						<GuestModeStatus />
+					{/if}
 				{/if}
-
-                {#if $peerStore.peerChannelDetail && $peerStore.peerMode === PeerOperationMode.Guest}
-                    <GuestModeStatus />
-                {/if}
 
                 <Configuration />
                 

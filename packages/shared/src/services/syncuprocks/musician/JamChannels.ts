@@ -8,6 +8,16 @@ export interface JamChannelDetail {
 	code: string;
 }
 
+export interface JamChannelDetailCreate {
+	friendlyName: string;
+	code: string;
+}
+
+export interface JamChannelDetailJoin {
+	identifier: string;
+	code: string;
+}
+
 export class JamChannels {
 	static async getChannelList() {
 		const data = await fetch(`/api/musician/jam/channel`, { method: "GET", headers: { "Content-Type": "application/json" }});
@@ -15,10 +25,16 @@ export class JamChannels {
 		return json.data!;
 	}
 
-	static async createChannel(detail: JamChannelDetail) {
-		const data = await fetch(`/api/musician/jam/channel/create`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(detail)});
+	static async createChannel(create: JamChannelDetailCreate) {
+		const data = await fetch(`/api/musician/jam/channel/create`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(create)});
 		const response: ApiResponseBase<JamChannelDetail> = await data.json()
 		return response.data;
+	}
+
+	static async joinChannel(join: JamChannelDetailJoin) {
+		const data = await fetch(`/api/musician/jam/channel/join/${join.identifier}/${join.code}`, { method: "POST", headers: { "Content-Type": "application/json" }});
+		const response: ApiResponseBase<JamChannelDetail> = await data.json()
+		return response;
 	}
 
 	static async deleteChannel(identifier: string) {

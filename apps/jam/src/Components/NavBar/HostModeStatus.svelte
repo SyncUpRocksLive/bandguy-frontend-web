@@ -29,7 +29,7 @@
 	title="Host Status"
 	aria-label="Host status menu"
 >
-	🎸
+	🎸H
 </button>
 
 {#if show}

@@ -21,7 +21,7 @@
 	title="Guest Status"
 	aria-label="Guest status menu"
 >
-	🎤
+	🎤G
 </button>
 
 {#if show}
