@@ -2,6 +2,7 @@ import { ApiResponseBase } from "@shared/services/syncuprocks/Types";
 
 export interface JamChannelDetail {
 	hostUser: string;
+	leaderIdentifier: string;
 	identifier: string;
 	friendlyName: string;
 	timestamp: number;
@@ -9,6 +10,7 @@ export interface JamChannelDetail {
 }
 
 export interface JamChannelDetailCreate {
+	leaderIdentifier: string;
 	friendlyName: string;
 	code: string;
 }
@@ -28,7 +30,7 @@ export class JamChannels {
 	static async createChannel(create: JamChannelDetailCreate) {
 		const data = await fetch(`/api/musician/jam/channel/create`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(create)});
 		const response: ApiResponseBase<JamChannelDetail> = await data.json()
-		return response.data;
+		return response;
 	}
 
 	static async joinChannel(join: JamChannelDetailJoin) {

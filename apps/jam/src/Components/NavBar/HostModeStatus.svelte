@@ -36,7 +36,7 @@
 	<div class="status-overlay" onclick={() => setShow(false)} onkeydown={(e) => { if (e.key === 'Escape') setShow(false); }} role="dialog" aria-modal="true" tabindex="-1">
 		<div class="status-popover" onclick={(e) => e.stopPropagation()}>
 			<div class="status-header">
-				<h4>{$peerStore.peerChannelDetail?.friendlyName ?? '--'}</h4>
+				<h4>{$peerStore.peerChannelDetail?.friendlyName ?? '--'} - Code: {$peerStore.peerChannelDetail?.code ?? '--'}</h4>
 				<button onclick={() => setShow(false)} aria-label="Close">&times;</button>
 			</div>
 			<div class="status-body">

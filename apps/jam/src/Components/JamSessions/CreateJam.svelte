@@ -6,6 +6,7 @@
 	import { LogError, LogInfo, LogObject } from '@shared/services/Logger';
 	import { onMount } from 'svelte';
 	import { PeerOperationMode, PeerRole } from '@/Types/Types';
+	import { appState } from '@/State.svelte';
 
 	let joinCode = $state('');
 	let channelName = $state('');
@@ -14,9 +15,8 @@
 
 	// Query for available channels
 	const channelsQuery = createQuery(() => ({
-		queryKey: ['channel.list'],
+		queryKey: ['channel.list.create'],
 		queryFn: async () => {
-			// TODO: Refactor this to use same type of response as Api
 			LogInfo('Fetching user channel list...', 'JamJoin');
 			const channels = await JamChannels.getChannelList();
 
@@ -44,16 +44,25 @@
 	const mutation = createMutation(() => ({
 		mutationFn: async () => {
 			return await JamChannels.createChannel({
+				leaderIdentifier: appState.connectionIdentifier,
 				friendlyName: channelName,
 				code: joinCode
 			});
 		},
 
-		onSuccess: (data) => {
+		onSuccess: (res) => {
 			LogInfo(`Channel Created`, 'CreateJam');
+
+			if (!res.success) {
+				showToast(`Failed to create channel: ${res.errorMessage ?? 'Unknown error'}`);
+				return;
+			}
+
+			const data = res.data!;
 
 			peerStore.updateState({
 				peerChannelDetail: {
+					leaderIdentifier: data!.leaderIdentifier,
 					hostUser: data!.hostUser,
 					identifier: data!.identifier,
 					friendlyName: data!.friendlyName,
@@ -101,6 +110,7 @@
 		peerStore.updateState({
 			peerChannelDetail: {
 				hostUser: channel.hostUser,
+				leaderIdentifier: channel.leaderIdentifier,
 				identifier: channel.identifier,
 				friendlyName: channel.friendlyName,
 				timestamp: channel.timestamp,
@@ -234,7 +244,11 @@
 								class="secondary"
 								onclick={() => reconnectChannel(channel)}
 							>
-								Resume
+								{#if channel.leaderIdentifier === appState.connectionIdentifier}
+									Resume
+								{:else}
+									Take Over
+								{/if}
 							</button>
 
 							<button

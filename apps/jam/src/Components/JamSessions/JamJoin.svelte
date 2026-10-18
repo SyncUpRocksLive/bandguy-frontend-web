@@ -20,19 +20,13 @@
 
 	// Query for available channels
 	const channelsQuery = createQuery(() => ({
-		queryKey: ['channel.list'],
+		queryKey: ['channel.list.join'],
 		queryFn: async () => {
-			// TODO: Refactor this to use same type of response as Api
 			LogInfo('Fetching channel list...', 'JamJoin');
 			const allChannels = await JamChannels.getChannelList();
 			LogObject('info', 'JamJoin - Channel List', allChannels);
 
-			// Ignore our own channels
-			const otherChannels = allChannels
-				.filter((k) => k.hostUser !== auth.user?.userId)
-				.sort((a, b) => a.timestamp - b.timestamp);
-
-			return otherChannels;
+			return allChannels;
 		},
 		refetchInterval: 5000,
 		refetchOnMount: false,
@@ -58,6 +52,7 @@
 			peerStore.updateState({
 				peerChannelDetail: {
 					hostUser: jamChannelSelected!.hostUser,
+					leaderIdentifier: jamChannelSelected!.leaderIdentifier,
 					identifier: jamChannelSelected!.identifier,
 					friendlyName: jamChannelSelected!.friendlyName,
 					timestamp: jamChannelSelected!.timestamp,
