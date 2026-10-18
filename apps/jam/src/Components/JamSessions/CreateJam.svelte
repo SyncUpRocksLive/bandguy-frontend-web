@@ -175,7 +175,17 @@
 					autocorrect="off"
 					autocapitalize="off"
 					spellcheck="false"
-					bind:value={joinCode}
+					value={joinCode}
+					oninput={(event) => {
+						const input = event.currentTarget;
+						const cursor = input.selectionStart ?? input.value.length;
+						const sanitized = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+						const sanitizedCursor = input.value.slice(0, cursor).toUpperCase().replace(/[^A-Z0-9]/g, '').length;
+
+						input.value = sanitized;
+						input.setSelectionRange(sanitizedCursor, sanitizedCursor);
+						joinCode = sanitized;
+					}}
 					class="code-input"
 					placeholder="ROCK2026"
 					onkeydown={(e) => e.key === 'Enter' && createChannel()}

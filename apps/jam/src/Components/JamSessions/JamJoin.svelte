@@ -149,7 +149,18 @@
 				<input
 					type="text"
 					placeholder={`Enter ${jamChannelSelected?.friendlyName} code `}
-					bind:value={joinCode}
+					value={joinCode}
+					autocapitalize="characters"
+					oninput={(event) => {
+						const input = event.currentTarget;
+						const cursor = input.selectionStart ?? input.value.length;
+						const sanitized = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+						const sanitizedCursor = input.value.slice(0, cursor).toUpperCase().replace(/[^A-Z0-9]/g, '').length;
+
+						input.value = sanitized;
+						input.setSelectionRange(sanitizedCursor, sanitizedCursor);
+						joinCode = sanitized;
+					}}
 					onkeydown={(e) => {
 						if (e.key === 'Enter') joinWithCode();
 					}}
