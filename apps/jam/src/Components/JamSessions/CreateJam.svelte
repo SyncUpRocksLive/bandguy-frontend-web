@@ -64,6 +64,7 @@
 				peerChannelDetail: {
 					leaderIdentifier: data!.leaderIdentifier,
 					hostUser: data!.hostUser,
+					hostUserName: data!.hostUserName,
 					identifier: data!.identifier,
 					friendlyName: data!.friendlyName,
 					timestamp: data!.timestamp,
@@ -110,6 +111,7 @@
 		peerStore.updateState({
 			peerChannelDetail: {
 				hostUser: channel.hostUser,
+				hostUserName: channel.hostUserName,
 				leaderIdentifier: channel.leaderIdentifier,
 				identifier: channel.identifier,
 				friendlyName: channel.friendlyName,

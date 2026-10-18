@@ -18,6 +18,27 @@
 		}, 3000);
 	}
 
+	let channelsByHost = $derived.by(() => {
+		const groups = new Map<string, JamChannelDetail[]>();
+
+		// TODO: Clean this up. Our songs must be at top
+		for (const channel of channelsQuery.data ?? []) {
+			const hostChannels = groups.get(channel.hostUserName) ?? [];
+			hostChannels.push(channel);
+
+			if (channel.hostUser === auth.user?.userId) {
+				// Move the current user's channels to the top of the list
+				groups.delete(channel.hostUserName);
+				groups.set(channel.hostUserName, hostChannels);
+				continue;
+			}
+
+			groups.set(channel.hostUserName, hostChannels);
+		}
+
+		return Array.from(groups, ([hostUserName, channels]) => ({ hostUserName, channels }));
+	});
+
 	// Query for available channels
 	const channelsQuery = createQuery(() => ({
 		queryKey: ['channel.list.join'],
@@ -52,6 +73,7 @@
 			peerStore.updateState({
 				peerChannelDetail: {
 					hostUser: jamChannelSelected!.hostUser,
+					hostUserName: jamChannelSelected!.hostUserName,
 					leaderIdentifier: jamChannelSelected!.leaderIdentifier,
 					identifier: jamChannelSelected!.identifier,
 					friendlyName: jamChannelSelected!.friendlyName,
@@ -89,7 +111,6 @@
 <div class="band-join-container">
 	<div class="band-header">
 		<p class="band-title">Select Jam</p>
-		<!-- FUTURE: Group by band. Allow filter -->
 	</div>
 
 	<div class="band-content">
@@ -100,20 +121,27 @@
 		{:else if channelsQuery.data && channelsQuery.data.length === 0}
 			<p class="status-text">No jam rooms available</p>
 		{:else}
-			<ul class="channel-list">
-				{#each channelsQuery.data as channel (channel.identifier)}
-					<li class="channel-item">
-						<button 
-							class="join-button"
-							class:selected={jamChannelSelected?.identifier === channel.identifier}
-							onclick={() => jamChannelSelected = channel}
-							title={`Join ${channel.friendlyName}`}
-						>
-							<strong>{channel.friendlyName}</strong>
-						</button>
-					</li>
+			<div class="channel-groups">
+				{#each channelsByHost as group (group.hostUserName)}
+					<section class="channel-group">
+						<h2 class="host-heading">{group.hostUserName}</h2>
+						<ul class="channel-list">
+							{#each group.channels as channel (channel.identifier)}
+								<li class="channel-item">
+									<button 
+										class="join-button"
+										class:selected={jamChannelSelected?.identifier === channel.identifier}
+										onclick={() => jamChannelSelected = channel}
+										title={`Join ${channel.friendlyName}`}
+									>
+										<strong>{channel.friendlyName}</strong>
+									</button>
+								</li>
+							{/each}
+						</ul>
+					</section>
 				{/each}
-			</ul>
+			</div>
 		{/if}
 
 		<div class="code-input-section">
@@ -191,6 +219,24 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+
+	.channel-groups {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.channel-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.host-heading {
+		margin: 0;
+		font-size: 0.9rem;
+		font-weight: 600;
 	}
 
 	.channel-item {

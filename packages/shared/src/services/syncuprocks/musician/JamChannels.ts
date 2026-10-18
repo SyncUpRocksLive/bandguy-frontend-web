@@ -2,6 +2,7 @@ import { ApiResponseBase } from "@shared/services/syncuprocks/Types";
 
 export interface JamChannelDetail {
 	hostUser: string;
+	hostUserName: string;
 	leaderIdentifier: string;
 	identifier: string;
 	friendlyName: string;
