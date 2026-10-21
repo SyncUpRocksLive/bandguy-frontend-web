@@ -10,9 +10,9 @@ export type MessageData =
 	|{type: MessageDataType.Text, value: string}
 
 export interface Message {
-	toUserId: string;
 	fromUserId: string;
 	fromUsername: string;
+	fromUserConnectionIdentifier: string;
 	sentUtc: number;
 	messageData: MessageData;
 }

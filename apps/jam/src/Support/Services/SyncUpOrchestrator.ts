@@ -43,6 +43,7 @@ class SyncUpOrchestrator implements ISyncUpOrchestrator {
 			LogVerbose('closing connections', context);
         } else if (mode === PeerOperationMode.Host) {
             // Setup for host operations
+			// TODO: setup SSE connection
         } else if (mode === PeerOperationMode.Guest) {
 			// This may change later
 			peerRole = PeerRole.Player;			

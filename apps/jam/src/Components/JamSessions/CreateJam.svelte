@@ -44,7 +44,7 @@
 	const mutation = createMutation(() => ({
 		mutationFn: async () => {
 			return await JamChannels.createChannel({
-				leaderIdentifier: appState.connectionIdentifier,
+				connectionIdentifier: appState.connectionIdentifier,
 				friendlyName: channelName,
 				code: joinCode
 			});
@@ -62,7 +62,7 @@
 
 			peerStore.updateState({
 				peerChannelDetail: {
-					leaderIdentifier: data!.leaderIdentifier,
+					connectionIdentifier: data!.connectionIdentifier,
 					hostUser: data!.hostUser,
 					hostUserName: data!.hostUserName,
 					identifier: data!.identifier,
@@ -112,7 +112,7 @@
 			peerChannelDetail: {
 				hostUser: channel.hostUser,
 				hostUserName: channel.hostUserName,
-				leaderIdentifier: channel.leaderIdentifier,
+				connectionIdentifier: channel.connectionIdentifier,
 				identifier: channel.identifier,
 				friendlyName: channel.friendlyName,
 				timestamp: channel.timestamp,
@@ -246,7 +246,7 @@
 							</div>
 
 							<div class="channel-code">
-								Code: {channel.code}
+								Code: {channel.code} : {channel.identifier}
 							</div>
 						</div>
 
@@ -256,7 +256,7 @@
 								class="secondary"
 								onclick={() => reconnectChannel(channel)}
 							>
-								{#if channel.leaderIdentifier === appState.connectionIdentifier}
+								{#if channel.connectionIdentifier === appState.connectionIdentifier}
 									Resume
 								{:else}
 									Take Over

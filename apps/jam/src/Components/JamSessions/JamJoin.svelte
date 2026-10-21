@@ -5,6 +5,7 @@
 	import { LogInfo, LogObject, LogError } from '@shared/services/Logger';
 	import { peerStore } from '@/Stores/PeerStore.svelte';
 	import { PeerOperationMode, PeerRole } from '@/Types/Types';
+	import { appState } from '@/State.svelte';
 
 	let joinCode = $state('');
 	let toast = $state('');
@@ -59,7 +60,8 @@
 		mutationFn: async () => {
 			return await JamChannels.joinChannel({
 				identifier: jamChannelSelected!.identifier,
-				code: joinCode
+				code: joinCode,
+				connectionIdentifier: appState.connectionIdentifier
 			});
 		},
 
@@ -74,7 +76,7 @@
 				peerChannelDetail: {
 					hostUser: jamChannelSelected!.hostUser,
 					hostUserName: jamChannelSelected!.hostUserName,
-					leaderIdentifier: jamChannelSelected!.leaderIdentifier,
+					connectionIdentifier: jamChannelSelected!.connectionIdentifier,
 					identifier: jamChannelSelected!.identifier,
 					friendlyName: jamChannelSelected!.friendlyName,
 					timestamp: jamChannelSelected!.timestamp,
